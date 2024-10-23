@@ -31,5 +31,8 @@
 *.out
 *.app
 
-# Zone Identifiers
+# Zone Identifiers - for WSL
 *Zone*
+
+# .DS_Store - for macOS
+.DS_Store
