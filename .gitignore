@@ -30,6 +30,11 @@
 *.exe
 *.out
 *.app
+test
+main
+
+# VSCode
+.vscode
 
 # Zone Identifiers - for WSL
 *Zone*

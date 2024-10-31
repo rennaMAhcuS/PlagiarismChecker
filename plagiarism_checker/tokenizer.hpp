@@ -10,12 +10,12 @@
 // You should NOT modify ANYTHING in this file.
 
 class tokenizer_t {
-public:
+   public:
     tokenizer_t(std::string __file_name);
     ~tokenizer_t(void);
     std::vector<int> get_tokens(void);
 
-protected:
+   protected:
     std::string file_name;
     CXTranslationUnit unit;
     CXIndex index;
