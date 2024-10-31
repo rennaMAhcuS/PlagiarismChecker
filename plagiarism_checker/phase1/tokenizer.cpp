@@ -7,7 +7,7 @@ tokenizer_t::tokenizer_t(std::string __file_name) {
     const char* args[] = {"-std=c++20"};
     this->unit = clang_parseTranslationUnit(
         index,
-        this->file_name.c_str(), 
+        this->file_name.c_str(),
         args, 1,
         nullptr, 0,
         CXTranslationUnit_None);
@@ -24,16 +24,14 @@ tokenizer_t::~tokenizer_t(void) {
 
 std::vector<int> tokenizer_t::get_tokens(void) {
     struct tokenizer_data_t data = {std::vector<int>(), this};
-    clang_visitChildren(clang_getTranslationUnitCursor(this->unit), 
-            [](CXCursor c, CXCursor parent, CXClientData client_data) {
+    clang_visitChildren(clang_getTranslationUnitCursor(this->unit), [](CXCursor c, CXCursor parent, CXClientData client_data) {
                 tokenizer_data_t* data = 
                     reinterpret_cast<tokenizer_data_t*>(client_data);
                 if (data->tokenizer->is_from_main_file(c)) {
                     int token = static_cast<int>(clang_getCursorKind(c));
                     data->tokens.push_back(token);
                 }
-                return CXChildVisit_Recurse;
-            }, reinterpret_cast<CXClientData>(&data));
+                return CXChildVisit_Recurse; }, reinterpret_cast<CXClientData>(&data));
     return data.tokens;
 }
 
@@ -41,7 +39,7 @@ bool tokenizer_t::is_from_main_file(CXCursor __cursor) {
     CXFile cursor_file;
     unsigned line, column, offset;
     clang_getSpellingLocation(clang_getCursorLocation(__cursor),
-            &cursor_file, &line, &column, &offset);
+                              &cursor_file, &line, &column, &offset);
     CXFile main_file = clang_getFile(this->unit, this->file_name.c_str());
     return clang_File_isEqual(cursor_file, main_file);
 }
@@ -49,4 +47,4 @@ bool tokenizer_t::is_from_main_file(CXCursor __cursor) {
 std::string get_cursor_kind_spelling(int kind) {
     return clang_getCString(clang_getCursorKindSpelling(
         static_cast<CXCursorKind>(kind)));
-} 
+}

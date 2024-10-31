@@ -1,8 +1,8 @@
 #include <array>
+#include <cmath>
 #include <iostream>
 #include <span>
 #include <vector>
-#include <cmath>
 // -----------------------------------------------------------------------------
 
 // You are free to add any STL includes above this comment, below the --line--.
@@ -11,10 +11,10 @@
 
 // OPTIONAL: Add your helper functions and data structures here
 
-std::array<int, 5> match_submissions(std::vector<int> &submission1, 
-        std::vector<int> &submission2) {
+std::array<int, 5> match_submissions(std::vector<int> &submission1,
+                                     std::vector<int> &submission2) {
     // TODO: Write your code here
     std::array<int, 5> result = {0, 0, 0, 0, 0};
-    return result; // dummy return
+    return result;  // dummy return
     // End TODO
 }
