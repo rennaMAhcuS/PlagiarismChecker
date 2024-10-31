@@ -9,7 +9,12 @@ main: main.cpp tokenizer.cpp
 	rm -rf *.dSYM
 	./main
 
+test: test.cpp tokenizer.cpp
+	$(CXX) $(CXXFLAGS) $(INCLUDEFLAGS) $(LDFLAGS) $^ -o $@
+	rm -rf *.dSYM
+	./test
+
 clean:
 	rm -rf main *.dSYM
 
-.PHONY: main clean
+.PHONY: main test clean
