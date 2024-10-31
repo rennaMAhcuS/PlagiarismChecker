@@ -1,9 +1,9 @@
-#include "match_submissions.hpp"
 #include "../tokenizer.hpp"
+#include "match_submissions.hpp"
 
 void printVec(std::vector<int>& v) {
     for (int i = 0; i < v.size(); i++) {
-	std::cout << v[i] << " ";
+        std::cout << v[i] << " ";
     }
     std::cout << "\n";
 }
