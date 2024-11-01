@@ -9,7 +9,7 @@ void printContainer(T& v) {
     std::cout << "\n";
 }
 
-#define TEST_TOKENS 1
+#define TEST_TOKENS 0
 
 int main(void) {
 #if TEST_TOKENS
@@ -20,16 +20,33 @@ int main(void) {
     std::array<int, 5> res = match_submissions(v1, v2);
     printContainer(res);
 #else
-    std::vector<int> v1 = {};
+    std::vector<int> v1 = {
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+    };
     for (int i = v1.size(); i > 0; i--) {
         std::vector<int> temp(v1.begin(), v1.begin() + i);
         std::vector<int> kmptable = kmp_table(temp);
         printContainer(kmptable);
     }
-    std::vector<int> h = kmp_table(v1);
-    std::vector<int> last = calcLast(h);
+    std::vector<int> kmpTable = kmp_table(v1);
     for (int i = v1.size(); i > 0; i--) {
-        std::vector<int> kmptable = prefixKmpTable(h, last, i);
+        std::vector<int> lasts = calcLast;
+        std::vector<int> kmptable = ;
         printContainer(kmptable);
     }
 #endif

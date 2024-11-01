@@ -31,12 +31,35 @@ std::vector<int> kmp_table(const std::vector<int>& p) {
 
 // @param s: test vector
 // @return: kmp table for all suffixes of s
-std::vector<std::vector<int>> allKmps(const std::vector<int>& s) {
-    std::vector<std::vector<int>> res(s.size(), std::vector<int>());
+std::vector<std::vector<int>> allKmpTables(const std::vector<int>& s) {
+    std::vector<std::vector<int>> res(s.size());
     for (int i = 0; i < s.size(); i++) {
         std::vector<int> subvec(s.begin() + i, s.end());
         res[i] = kmp_table(subvec);
     }
+    return res;
+}
+
+// @param p: pattern vector
+// @param i: end of prefix ([0, i) is taken)
+// @param h: kmp table of p
+// @param last: stores kmp_table[i]
+// @return : kmp_table of prefix
+std::vector<int> prefixKmpTable(const std::vector<int>& h, const std::vector<int>& last, int i) {
+    std::vector<int> res(h.begin(), h.begin() + i + 1);
+    res[i] = last[i];
+    return res;
+}
+
+std::vector<int> calcLast(const std::vector<int>& kmpTable) {
+    if (kmpTable.empty()) return {};
+    std::vector<int> res = kmpTable;
+    int i = res.size() - 2;
+    while (i > 0) {
+        res[i] = res[i + 1] - 1 > res[i] ? res[i + 1] - 1 : res[i];
+        i--;
+    }
+    res[0] = -1;
     return res;
 }
 
@@ -49,7 +72,7 @@ std::vector<int> kmp(const std::vector<int>& s, const std::vector<int>& p, const
     int i = 0, j = 0;
     std::vector<int> found;
     while (i < s.size()) {
-        if (j < p.size() && p[j] == s[i]) {
+        if (p[j] == s[i]) {
             i++, j++;
             if (j == p.size()) {
                 found.push_back(i - j);
@@ -66,12 +89,19 @@ std::vector<int> kmp(const std::vector<int>& s, const std::vector<int>& p, const
 }
 
 int numMatches(const std::vector<int>& v1, const std::vector<int>& v2) {
-    std::vector<std::vector<int>> kmps = allKmps(v1);
+    std::vector<std::vector<int>> kmps = allKmpTables(v1);
     int n = v1.size(), num = 0;
+    std::vector<std::vector<int>> lasts(kmps.size());
+    for (int j = 0; j < kmps.size(); j++) {
+        lasts[j] = calcLast(kmps[j]);
+    }
     for (int i = n; i > 0; i--) {
         for (int j = 0; j < n - i + 1; j++) {
             std::vector<int> pattern(v1.begin() + j, v1.begin() + j + i);
+            int temp = kmps[j][i];
+            kmps[j][i] = lasts[j][i];
             std::vector<int> res = kmp(v2, pattern, kmps[j]);
+            kmps[j][i] = temp;
             num += res.size();
         }
     }
