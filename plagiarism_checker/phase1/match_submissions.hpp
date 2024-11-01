@@ -4,6 +4,8 @@
 #include <span>
 #include <vector>
 // -----------------------------------------------------------------------------
+#include <chrono>
+#include <string>
 
 // You are free to add any STL includes above this comment, below the --line--.
 // DO NOT add "using namespace std;" or include any other files/libraries.
@@ -11,7 +13,28 @@
 
 // OPTIONAL: Add your helper functions and data structures here
 
-// @param s: vector
+template <typename T>
+void printContainer(T& v, std::string c = " ") {
+    for (auto& i : v) {
+        std::cout << i << c;
+    }
+    std::cout << "\n";
+}
+
+template <typename T>
+void printContainerToFile(T& v, std::string filename) {
+    std::ofstream fileStream(filename);
+    if (!fileStream) {
+        std::cerr << "Unable to open file " << filename << std::endl;
+    }
+    for (auto& i : v) {
+        fileStream << i << "\n";
+    }
+    fileStream << "\n";
+    fileStream.close();
+}
+
+// @param s: test vector
 // @return: kmp table of s
 std::vector<int> kmp_table(const std::vector<int>& p) {
     int i = 1, j = 0;
@@ -40,17 +63,7 @@ std::vector<std::vector<int>> allKmpTables(const std::vector<int>& s) {
     return res;
 }
 
-// @param p: pattern vector
-// @param i: end of prefix ([0, i) is taken)
-// @param h: kmp table of p
-// @param last: stores kmp_table[i]
-// @return : kmp_table of prefix
-std::vector<int> prefixKmpTable(const std::vector<int>& h, const std::vector<int>& last, int i) {
-    std::vector<int> res(h.begin(), h.begin() + i + 1);
-    res[i] = last[i];
-    return res;
-}
-
+// helper function for efficient kmp_table computation of all prefixes
 std::vector<int> calcLast(const std::vector<int>& kmpTable) {
     if (kmpTable.empty()) return {};
     std::vector<int> res = kmpTable;
@@ -88,23 +101,37 @@ std::vector<int> kmp(const std::vector<int>& s, const std::vector<int>& p, const
     return found;
 }
 
+// @param v1: submission 1
+// @param v2: submission 2
+// @return: number of maximal matches
+// we'll check presence of each substring of v1 in v2 using kmp
 int numMatches(const std::vector<int>& v1, const std::vector<int>& v2) {
-    std::vector<std::vector<int>> kmps = allKmpTables(v1);
+    // kmpTables[j] -> kmp table of (suffix of v1 starting at j)
+    std::vector<std::vector<int>> kmpTables = allKmpTables(v1);
     int n = v1.size(), num = 0;
-    std::vector<std::vector<int>> lasts(kmps.size());
-    for (int j = 0; j < kmps.size(); j++) {
-        lasts[j] = calcLast(kmps[j]);
+
+    // for efficient calculation of kmp table of v1[j : j + i]
+    std::vector<std::vector<int>> lasts(kmpTables.size());
+    for (int j = 0; j < kmpTables.size(); j++) {
+        lasts[j] = calcLast(kmpTables[j]);
     }
-    for (int i = n; i > 0; i--) {
+
+    // i -> length of pattern
+    // j -> start index of pattern
+    for (int i = n; i > 20; i--) {
         for (int j = 0; j < n - i + 1; j++) {
             std::vector<int> pattern(v1.begin() + j, v1.begin() + j + i);
-            int temp = kmps[j][i];
-            kmps[j][i] = lasts[j][i];
-            std::vector<int> res = kmp(v2, pattern, kmps[j]);
-            kmps[j][i] = temp;
+            // adjusting to get kmp table of v1[j : j + i]
+            int temp = kmpTables[j][i];
+            kmpTables[j][i] = lasts[j][i];
+            // finding all occurence of pattern in v2
+            std::vector<int> res = kmp(v2, pattern, kmpTables[j]);
+            // restoring the adjustment
+            kmpTables[j][i] = temp;
             num += res.size();
         }
     }
+
     return num;
 }
 
