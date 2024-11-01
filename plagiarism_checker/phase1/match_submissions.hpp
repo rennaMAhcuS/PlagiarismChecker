@@ -64,13 +64,14 @@ int numMatches(const std::vector<int>& v1, const std::vector<int>& v2) {
             num += res.size();
         }
     }
-    return nums;
+    return num;
 }
 
 std::array<int, 5> match_submissions(std::vector<int>& submission1,
                                      std::vector<int>& submission2) {
     // TODO: Write your code here
     std::array<int, 5> result = {0, 0, 0, 0, 0};
+    result[1] = numMatches(submission1, submission2);
     return result;  // dummy return
     // End TODO
 }

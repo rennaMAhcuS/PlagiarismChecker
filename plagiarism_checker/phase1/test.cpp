@@ -12,5 +12,5 @@ int main(void) {
     std::string s = "xyxy";
     std::vector<std::vector<int>> v = allKmps(s);
     for (auto& i : v) printVec(i);
-    std::cout << "Hello\n";
+    std::cout << "Hello beta\n";
 }
