@@ -45,12 +45,11 @@ std::vector<std::vector<int>> allKmps(const std::vector<int>& s) {
 // @param h: kmp table
 // @return: start indices of all matches
 std::vector<int> kmp(const std::vector<int>& s, const std::vector<int>& p, const std::vector<int>& h) {
-    if (p.size() <= 0) throw std::invalid_argument("Pattern is empty");
+    if (p.empty()) throw std::invalid_argument("Pattern is empty");
     int i = 0, j = 0;
     std::vector<int> found;
-    found.reserve(s.size());
     while (i < s.size()) {
-        if (p[j] == s[i]) {
+        if (j < p.size() && p[j] == s[i]) {
             i++, j++;
             if (j == p.size()) {
                 found.push_back(i - j);
@@ -68,10 +67,10 @@ std::vector<int> kmp(const std::vector<int>& s, const std::vector<int>& p, const
 
 int numMatches(const std::vector<int>& v1, const std::vector<int>& v2) {
     std::vector<std::vector<int>> kmps = allKmps(v1);
-    int n = v1.size(), m = v2.size(), num = 0;
+    int n = v1.size(), num = 0;
     for (int i = n; i > 0; i--) {
         for (int j = 0; j < n - i + 1; j++) {
-            std::vector<int> pattern(v1.begin() + j, v1.begin() + std::min(v1.size(), j + i + 1));
+            std::vector<int> pattern(v1.begin() + j, v1.begin() + j + i);
             std::vector<int> res = kmp(v2, pattern, kmps[j]);
             num += res.size();
         }
