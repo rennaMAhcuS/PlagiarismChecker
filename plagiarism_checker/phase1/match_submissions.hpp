@@ -11,7 +11,7 @@
 
 // OPTIONAL: Add your helper functions and data structures here
 
-std::vector<int> kmp_table(const std::vector<int>&& s) {
+std::vector<int> kmp_table(const std::vector<int>& s) {
     int i = 1, j = 0;
     std::vector<int> h(s.size() + 1);
     h[0] = -1;
@@ -30,7 +30,8 @@ std::vector<int> kmp_table(const std::vector<int>&& s) {
 std::vector<std::vector<int>> allKmps(const std::vector<int>& s) {
     std::vector<std::vector<int>> res(s.size(), std::vector<int>());
     for (int i = 0; i < s.size(); i++) {
-        res[i] = kmp_table(std::vector<int>(s.begin() + i, s.end()));
+        std::vector<int> subvec(s.begin() + i, s.end());
+        res[i] = kmp_table(subvec);
     }
     return res;
 }
