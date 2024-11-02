@@ -17,7 +17,7 @@ int main(void) {
     auto end = std::chrono::high_resolution_clock::now();
 
     auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start);
-    std::cout << "Time taken in (s): " << duration.count() / 1e6 << std::endl;
+    printTimeTaken(duration / 1e6);
     printContainer(res);
 #else
     std::vector<int> v1 = {};

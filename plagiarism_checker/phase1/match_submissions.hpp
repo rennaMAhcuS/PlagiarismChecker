@@ -13,10 +13,25 @@
 
 // OPTIONAL: Add your helper functions and data structures here
 
+// color codes for good printing
+const std::string RESET = "\033[0m";
+const std::string RED = "\033[31m";
+const std::string GREEN = "\033[32m";
+const std::string YELLOW = "\033[33m";
+const std::string BLUE = "\033[34m";
+const std::string MAGENTA = "\033[35m";
+const std::string CYAN = "\033[36m";
+const std::string BOLD = "\033[1m";
+
 template <typename T>
-void printContainer(T& v, std::string c = " ") {
+void printTimeTaken(T duration) {
+    std::cout << CYAN << "Time taken in (s): " << duration << RESET << std::endl;
+}
+
+template <typename T>
+void printContainer(T& v, const std::string& color = GREEN, std::string sep = " ") {
     for (auto& i : v) {
-        std::cout << i << c;
+        std::cout << color << i << RESET << sep;
     }
     std::cout << "\n";
 }
@@ -103,35 +118,11 @@ std::vector<int> kmp(const std::vector<int>& s,
     return found;
 }
 
-std::vector<int> kmpWithJumps(const std::vector<int>& s,
-                              const std::vector<int>& p,
-                              const std::vector<int>& h,
-                              const std::vector<int>& visited) {
-    if (p.empty()) throw std::invalid_argument("Pattern is empty");
-    int i = 0, j = 0;
-    std::vector<int> found;
-    while (i < s.size()) {
-        if (p[j] == s[i]) {
-            i++, j++;
-            if (j == p.size()) {
-                found.push_back(i - j);
-                j = h[j];
-            }
-        } else {
-            j = h[j];
-            if (j < 0) {
-                i++, j++;
-            }
-        }
-    }
-    return found;
-}
-
 // @param v1: submission 1
 // @param v2: submission 2
 // @return: number of maximal matches
 // we'll check presence of each substring of v1 in v2 using kmp
-int numMatches(const std::vector<int>& v1, const std::vector<int>& v2) {
+int numExactMatches(const std::vector<int>& v1, const std::vector<int>& v2) {
     // using a copy of v2 so that I can replace elements with `-1` whenever
     // a match is found so that the match is not searched again
     std::vector<int> v2Copy = v2;
@@ -148,7 +139,7 @@ int numMatches(const std::vector<int>& v1, const std::vector<int>& v2) {
 
     // i -> length of pattern
     // j -> start index of pattern
-    for (int i = 20; i > 10; i--) {
+    for (int i = 20; i >= 10; i--) {
         for (int j = 0; j < n - i + 1; j++) {
             std::vector<int> pattern(v1.begin() + j, v1.begin() + j + i);
             // adjusting to get kmp table of v1[j : j + i]
@@ -176,7 +167,7 @@ std::array<int, 5> match_submissions(std::vector<int>& submission1,
                                      std::vector<int>& submission2) {
     //  TODO: Write your code here
     std::array<int, 5> result = {0, 0, 0, 0, 0};
-    result[1] = numMatches(submission1, submission2);
+    result[1] = numExactMatches(submission1, submission2);
     return result;
     //  TODO: End
 }
