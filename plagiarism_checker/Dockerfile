@@ -4,7 +4,7 @@
 # docker start -ai CopyCatchers
 # NOTE: To use gdb and sanitizers properly, you should run it on native architecture.
 
-FROM --platform=linux/amd64 ubuntu:24.04
+FROM ubuntu:24.04
 
 ENV TZ=Asia/Kolkata
 
