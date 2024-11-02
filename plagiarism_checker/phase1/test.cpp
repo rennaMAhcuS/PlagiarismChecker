@@ -9,8 +9,8 @@ int main(void) {
     tokenizer_t file_two("testcases/one/two.cpp");
     std::vector<int> v1 = file_one.get_tokens();
     std::vector<int> v2 = file_two.get_tokens();
-    // printContainerToFile(v1, "v1.txt");
-    // printContainerToFile(v2, "v2.txt");
+    printContainerToFile(v1, "v1.txt");
+    printContainerToFile(v2, "v2.txt");
 
     auto start = std::chrono::high_resolution_clock::now();
     std::array<int, 5> res = match_submissions(v1, v2);
