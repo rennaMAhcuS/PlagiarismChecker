@@ -80,7 +80,9 @@ std::vector<int> calcLast(const std::vector<int>& kmpTable) {
 // @param p: pattern
 // @param h: kmp table
 // @return: start indices of all matches
-std::vector<int> kmp(const std::vector<int>& s, const std::vector<int>& p, const std::vector<int>& h) {
+std::vector<int> kmp(const std::vector<int>& s,
+                     const std::vector<int>& p,
+                     const std::vector<int>& h) {
     if (p.empty()) throw std::invalid_argument("Pattern is empty");
     int i = 0, j = 0;
     std::vector<int> found;
