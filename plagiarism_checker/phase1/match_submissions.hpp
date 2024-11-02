@@ -163,11 +163,80 @@ int numExactMatches(const std::vector<int>& v1, const std::vector<int>& v2) {
     return num;
 }
 
+// start indices of (sorted suffixes)
+std::vector<int> suffixArray(const std::vector<int>& v) {
+    std::vector<std::pair<std::vector<int>, int>> suffixes(v.size());
+
+    for (int i = 0; i < v.size(); i++) {
+        suffixes.push_back({std::vector<int>(v.begin() + i, v.end()), i});
+    }
+
+    std::sort(suffixes.begin(), suffixes.end());
+
+    std::vector<int> res(v.size());
+    for (auto& [_, index] : suffixes) {
+        res.push_back(index);
+    }
+
+    return res;
+}
+
+std::vector<int> LCPArray(const std::vector<int>& v,
+                          const std::vector<int>& sa) {
+    int n = v.size();
+    std::vector<int> rank(n, 0), lcp(n - 1, 0);
+
+    for (int i = 0; i < n; i++) {
+        rank[sa[i]] = i;
+    }
+
+    int h = 0;
+    for (int i = 0; i < n; i++) {
+        if (rank[i] > 0) {
+            int j = sa[rank[i] - 1];
+            while (i + h < n && j + h < n && v[i + h] == v[j + h]) {
+                h++;
+            }
+            lcp[rank[i] - 1] = h;
+            if (h > 0) h--;
+        }
+    }
+
+    return lcp;
+}
+
+// @param v1: vector 1
+// @param v2: vector 2
+// @return: length and starting indices of longest matches in both the vectors
+// we'll do this using a dp table `dp` where `dp[i][j]` holds the length of
+// longest common subsequence of the two vectors upto index `i` and `j`
+std::array<int, 3> longestApproxMatch(std::vector<int>& v1,
+                                      std::vector<int>& v2) {
+    int n = v1.size(), m = v2.size();
+    int min_length = 30;
+    int min_match_length = static_cast<int>(0.8 * std::max(n, m));
+
+    std::vector<int> combined = v1;
+    combined.push_back(-1);
+    combined.insert(combined.end(), v2.begin(), v2.end());
+
+    auto suffix_array = suffixArray(combined);
+    auto lcp_array = LCPArray(combined, suffix_array);
+
+    int best_length = 0, best_start_index_v1 = -1, best_start_index_v2 = -1;
+
+    return {best_length, best_start_index_v1, best_start_index_v2};
+}
+
 std::array<int, 5> match_submissions(std::vector<int>& submission1,
                                      std::vector<int>& submission2) {
     //  TODO: Write your code here
     std::array<int, 5> result = {0, 0, 0, 0, 0};
     result[1] = numExactMatches(submission1, submission2);
+    std::array<int, 3> approxMatch = longestApproxMatch(submission1, submission2);
+    result[2] = approxMatch[0];
+    result[3] = approxMatch[1];
+    result[4] = approxMatch[2];
     return result;
     //  TODO: End
 }
