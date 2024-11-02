@@ -103,11 +103,39 @@ std::vector<int> kmp(const std::vector<int>& s,
     return found;
 }
 
+std::vector<int> kmpWithJumps(const std::vector<int>& s,
+                              const std::vector<int>& p,
+                              const std::vector<int>& h,
+                              const std::vector<int>& visited) {
+    if (p.empty()) throw std::invalid_argument("Pattern is empty");
+    int i = 0, j = 0;
+    std::vector<int> found;
+    while (i < s.size()) {
+        if (p[j] == s[i]) {
+            i++, j++;
+            if (j == p.size()) {
+                found.push_back(i - j);
+                j = h[j];
+            }
+        } else {
+            j = h[j];
+            if (j < 0) {
+                i++, j++;
+            }
+        }
+    }
+    return found;
+}
+
 // @param v1: submission 1
 // @param v2: submission 2
 // @return: number of maximal matches
 // we'll check presence of each substring of v1 in v2 using kmp
 int numMatches(const std::vector<int>& v1, const std::vector<int>& v2) {
+    // using a copy of v2 so that I can replace elements with `-1` whenever
+    // a match is found so that the match is not searched again
+    std::vector<int> v2Copy = v2;
+
     // kmpTables[j] -> kmp table of (suffix of v1 starting at j)
     std::vector<std::vector<int>> kmpTables = allKmpTables(v1);
     int n = v1.size(), num = 0;
@@ -120,17 +148,24 @@ int numMatches(const std::vector<int>& v1, const std::vector<int>& v2) {
 
     // i -> length of pattern
     // j -> start index of pattern
-    for (int i = n; i > 20; i--) {
+    for (int i = 20; i > 10; i--) {
         for (int j = 0; j < n - i + 1; j++) {
             std::vector<int> pattern(v1.begin() + j, v1.begin() + j + i);
             // adjusting to get kmp table of v1[j : j + i]
             int temp = kmpTables[j][i];
             kmpTables[j][i] = lasts[j][i];
             // finding all occurence of pattern in v2
-            std::vector<int> res = kmp(v2, pattern, kmpTables[j]);
+
+            std::vector<int> res = kmp(v2Copy, pattern, kmpTables[j]);
+            for (auto start : res) {
+                for (int index = start; index < start + i; index++) {
+                    v2Copy[index] = -1;
+                }
+            }
+
             // restoring the adjustment
             kmpTables[j][i] = temp;
-            num += res.size();
+            num += res.size() * i;
         }
     }
 
