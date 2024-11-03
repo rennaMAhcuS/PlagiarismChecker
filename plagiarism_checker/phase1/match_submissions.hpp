@@ -199,9 +199,18 @@ std::array<int, 3> longestApproxMatch(std::vector<int>& v1, std::vector<int>& v2
     return {maxLen, maxI, maxJ};
 }
 
-bool isPlagged(const int exact_matches, const int approx_matches,
-               const int v1size, const int v2size) {
-    return true;
+bool isPlagged(const int exactMatches, const int approxMatches,
+               const int v1Size, const int v2Size) {
+    double exactMatchRatio = (double)exactMatches / v1Size;
+    double approxMatchRatio = (double)approxMatches / v1Size;
+
+    double threshold = 0.4;
+    double weightExact = 0.8;
+    double weightApprox = 1 - weightExact;
+    double score = weightExact * exactMatchRatio + weightApprox * approxMatchRatio;
+
+    if (score > threshold) return true;
+    return false;
 }
 
 std::array<int, 5> match_submissions(std::vector<int>& submission1,

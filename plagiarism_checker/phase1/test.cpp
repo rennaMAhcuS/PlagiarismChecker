@@ -2,8 +2,8 @@
 #include "match_submissions.hpp"
 
 int main(void) {
-    tokenizer_t file_one_1("testcases/extra/one.cpp");
-    tokenizer_t file_two_1("testcases/extra/two.cpp");
+    tokenizer_t file_one_1("testcases/one/one.cpp");
+    tokenizer_t file_two_1("testcases/one/two.cpp");
     std::vector<int> v1_1 = file_one_1.get_tokens();
     std::vector<int> v2_1 = file_two_1.get_tokens();
 
