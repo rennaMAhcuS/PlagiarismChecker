@@ -14,19 +14,19 @@ RUN apt-get update && apt-get full-upgrade -y
 RUN apt-get install -y clang llvm libc++-dev libclang-dev lld gdb make sudo wget
 RUN bash -c "$(wget https://gef.blah.cat/sh -O -)"
 
-RUN usermod -l ${USERNAME} -d /home/${USERNAME} -m ubuntu && \
+RUN useradd -ms /bin/bash ${USERNAME} && \
     echo "${USERNAME}:huffman" | chpasswd && \
-    usermod -aG sudo ${USERNAME} && \
-    echo "${USERNAME} ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers && \
-    echo "alias sudo=''" >> /home/${USERNAME}/.bashrc
+    usermod -aG sudo ${USERNAME}
+
+WORKDIR /home/${USERNAME}/plagiarism_checker
 
 USER ${USERNAME}
-WORKDIR /home/${USERNAME}/plagiarism_checker
 
 RUN echo "\
     leak:llvm\n\
     leak:_fetchInitializingClassList\n\
     leak:__Balloc_D2A" >> ~/.lsan.supp
+
 RUN echo "\
     export CXX=clang++\n\
     export CC=clang\n\
