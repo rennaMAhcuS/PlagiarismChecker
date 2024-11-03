@@ -6,10 +6,21 @@ LDFLAGS = -lclang -L/usr/lib/llvm-18/lib -rpath /usr/lib/llvm-18/lib -fuse-ld=ll
 
 main: main.cpp tokenizer.cpp
 	$(CXX) $(CXXFLAGS) $(INCLUDEFLAGS) $(LDFLAGS) $^ -o $@
-	rm -rf *.dSYM
 	./main
+	rm -rf main.dSYM main
+
+test: test.cpp tokenizer.cpp
+	$(CXX) $(CXXFLAGS) $(INCLUDEFLAGS) $(LDFLAGS) $^ -o $@
+	./test
+	rm -rf test.dSYM test
+
+score: score.cpp tokenizer.cpp
+	$(CXX) $(CXXFLAGS) $(INCLUDEFLAGS) $(LDFLAGS) $^ -o $@
+	./score
+	rm -rf score.dSYM score
 
 clean:
-	rm -rf main *.dSYM
+	rm main test
+	rm -rf *.dSYM
 
-.PHONY: main clean
+.PHONY: main test score clean
