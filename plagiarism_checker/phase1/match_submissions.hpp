@@ -53,7 +53,7 @@ void printContainerToFile(T& v, std::string filename) {
 
 // @param `p`: test vector
 // @return: kmp table of `p`
-std::vector<int> kmp_table(const std::vector<int>& p) {
+std::vector<int> kmpTable(const std::vector<int>& p) {
     int i = 1, j = 0;
     std::vector<int> h(p.size() + 1);
     h[0] = -1;
@@ -75,15 +75,15 @@ std::vector<std::vector<int>> allKmpTables(const std::vector<int>& s) {
     std::vector<std::vector<int>> res(s.size());
     for (int i = 0; i < s.size(); i++) {
         std::vector<int> subvec(s.begin() + i, s.end());
-        res[i] = kmp_table(subvec);
+        res[i] = kmpTable(subvec);
     }
     return res;
 }
 
-// helper function for efficient `kmp_table` computation of all prefixes
-std::vector<int> calcLast(const std::vector<int>& kmpTable) {
-    if (kmpTable.empty()) return {};
-    std::vector<int> res = kmpTable;
+// helper function for efficient `kmpTable` computation of all prefixes
+std::vector<int> calcLast(const std::vector<int>& givenKmpTable) {
+    if (givenKmpTable.empty()) return {};
+    std::vector<int> res = givenKmpTable;
     int i = res.size() - 2;
     while (i > 0) {
         res[i] = res[i + 1] - 1 > res[i] ? res[i + 1] - 1 : res[i];
