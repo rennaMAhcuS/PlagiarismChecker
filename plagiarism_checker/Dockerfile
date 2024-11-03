@@ -18,9 +18,9 @@ RUN useradd -ms /bin/bash ${USERNAME} && \
     echo "${USERNAME}:huffman" | chpasswd && \
     usermod -aG sudo ${USERNAME}
 
-WORKDIR /home/${USERNAME}/plagiarism_checker
-
 USER ${USERNAME}
+
+WORKDIR /home/${USERNAME}/plagiarism_checker
 
 RUN echo "\
     leak:llvm\n\
