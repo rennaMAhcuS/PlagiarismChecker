@@ -172,23 +172,26 @@ int numExactMatches(const std::vector<int>& v1, const std::vector<int>& v2) {
     return num;
 }
 
-std::array<int, 3> longestApproxMatch(std::vector<int>& v1,
-                                      std::vector<int>& v2) {
+std::array<int, 3> longestApproxMatch(std::vector<int>& v1, std::vector<int>& v2) {
     int n = v1.size(), m = v2.size();
-
-    std::vector<std::vector<int>> dp(n, std::vector<int>(m));
-
     int maxLen = 0, maxI = 0, maxJ = 0;
-    for (int len = 1; len < n + 1 && len < m + 1; len++) {
-        for (int i = 0; i < n - len; i++) {
-            for (int j = 0; j < m - len; j++) {
+
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < m; j++) {
+            int len = 0, match = 0;
+            while (i + len < n && j + len < m) {
                 if (v1[i + len] == v2[j + len]) {
-                    dp[i][j]++;
+                    match++;
                 }
-                if (dp[i][j] > 0.8 * len) {
-                    maxLen = len;
-                    maxI = i;
-                    maxJ = j;
+                len++;
+                if (match >= 0.8 * len) {
+                    if (len > maxLen) {
+                        maxLen = len;
+                        maxI = i;
+                        maxJ = j;
+                    }
+                } else {
+                    break;
                 }
             }
         }
