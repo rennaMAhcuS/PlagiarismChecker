@@ -14,11 +14,12 @@ RUN apt-get update && apt-get full-upgrade -y
 RUN apt-get install -y clang llvm libc++-dev libclang-dev lld gdb make sudo wget
 RUN bash -c "$(wget https://gef.blah.cat/sh -O -)"
 
-RUN useradd -ms /bin/bash ${USERNAME} && \
+RUN usermod -l ${USERNAME} -d /home/${USERNAME} -m ubuntu && \
     echo "${USERNAME}:huffman" | chpasswd && \
-    usermod -aG sudo ${USERNAME}
+    usermod -aG sudo ${USERNAME} && \
+    echo "${USERNAME} ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers && \
+    echo "alias sudo=''" >> /home/${USERNAME}/.bashrc
 
-RUN mkdir -p /home/${USERNAME}/plagiarism_checker && chown -R ${USERNAME}:${USERNAME} /home/${USERNAME}/plagiarism_checker
 USER ${USERNAME}
 WORKDIR /home/${USERNAME}/plagiarism_checker
 
