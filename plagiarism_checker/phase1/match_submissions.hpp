@@ -51,8 +51,8 @@ void printContainerToFile(T& v, std::string filename) {
     fileStream.close();
 }
 
-// @param s: test vector
-// @return: kmp table of s
+// @param `p`: test vector
+// @return: kmp table of `p`
 std::vector<int> kmp_table(const std::vector<int>& p) {
     int i = 1, j = 0;
     std::vector<int> h(p.size() + 1);
@@ -69,8 +69,8 @@ std::vector<int> kmp_table(const std::vector<int>& p) {
     return h;
 }
 
-// @param s: test vector
-// @return: kmp table for all suffixes of s
+// @param `s`: test vector
+// @return: kmp table for all suffixes of `s`
 std::vector<std::vector<int>> allKmpTables(const std::vector<int>& s) {
     std::vector<std::vector<int>> res(s.size());
     for (int i = 0; i < s.size(); i++) {
@@ -80,7 +80,7 @@ std::vector<std::vector<int>> allKmpTables(const std::vector<int>& s) {
     return res;
 }
 
-// helper function for efficient kmp_table computation of all prefixes
+// helper function for efficient `kmp_table` computation of all prefixes
 std::vector<int> calcLast(const std::vector<int>& kmpTable) {
     if (kmpTable.empty()) return {};
     std::vector<int> res = kmpTable;
@@ -93,9 +93,9 @@ std::vector<int> calcLast(const std::vector<int>& kmpTable) {
     return res;
 }
 
-// @param s: test vector
-// @param p: pattern
-// @param h: kmp table
+// @param `s`: test vector
+// @param `p`: pattern
+// @param `h`: kmp table
 // @return: start indices of all matches
 std::vector<int> kmp(const std::vector<int>& s,
                      const std::vector<int>& p,
@@ -120,10 +120,10 @@ std::vector<int> kmp(const std::vector<int>& s,
     return found;
 }
 
-// @param v1: submission 1
-// @param v2: submission 2
+// @param `v1`: submission 1
+// @param `v2`: submission 2
 // @return: number of maximal matches
-// we'll check presence of each substring of v1 in v2 using kmp
+// we'll check presence of each substring of `v1` in `v2` using kmp
 int numExactMatches(const std::vector<int>& v1, const std::vector<int>& v2) {
     // using a copy of v2 so that I can replace elements with `-1` whenever
     // a match is found so that the match is not searched again
@@ -141,7 +141,8 @@ int numExactMatches(const std::vector<int>& v1, const std::vector<int>& v2) {
 
     // i -> length of pattern
     // j -> start index of pattern
-    for (int i = 20; i >= 10; i--) {
+    // 40 is the best value for running the code (from observation)
+    for (int i = 15; i >= 10; i--) {
         for (int j = 0; j < n - i + 1; j++) {
             std::vector<int> pattern(v1.begin() + j, v1.begin() + j + i);
             // adjusting to get kmp table of v1[j : j + i]
@@ -195,19 +196,24 @@ std::array<int, 3> longestApproxMatch(std::vector<int>& v1,
             }
         }
     }
-
     return {maxLen, maxI, maxJ};
+}
+
+bool isPlagged(const int exact_matches, const int approx_matches,
+               const int v1size, const int v2size) {
+    return true;
 }
 
 std::array<int, 5> match_submissions(std::vector<int>& submission1,
                                      std::vector<int>& submission2) {
-    //  TODO: Write your code here
+    // TODO: Write your code here
     std::array<int, 5> result = {0, 0, 0, 0, 0};
     result[1] = numExactMatches(submission2, submission1);
     std::array<int, 3> approxMatch = longestApproxMatch(submission1, submission2);
     result[2] = approxMatch[0];
     result[3] = approxMatch[1];
     result[4] = approxMatch[2];
+    result[0] = isPlagged(result[1], result[2], submission1.size(), submission2.size());
     return result;
-    //  TODO: End
+    // End TODO
 }

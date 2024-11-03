@@ -1,24 +1,49 @@
 #include "../tokenizer.hpp"
 #include "match_submissions.hpp"
 
-#define TEST_TOKENS 1
+#define TEST_TOKENS_NO_KMP 1
 
 int main(void) {
-#if TEST_TOKENS
-    tokenizer_t file_one("testcases/one/one.cpp");
-    tokenizer_t file_two("testcases/one/two.cpp");
-    std::vector<int> v1 = file_one.get_tokens();
-    std::vector<int> v2 = file_two.get_tokens();
-    printContainerToFile(v1, "v1.txt");
-    printContainerToFile(v2, "v2.txt");
+#if TEST_TOKENS_NO_KMP
+    tokenizer_t file_one_1("testcases/one/one.cpp");
+    tokenizer_t file_two_1("testcases/one/two.cpp");
+    std::vector<int> v1_1 = file_one_1.get_tokens();
+    std::vector<int> v2_1 = file_two_1.get_tokens();
 
-    auto start = std::chrono::high_resolution_clock::now();
-    std::array<int, 5> res = match_submissions(v1, v2);
-    auto end = std::chrono::high_resolution_clock::now();
+    auto start_1 = std::chrono::high_resolution_clock::now();
+    std::array<int, 5> res_1 = match_submissions(v1_1, v2_1);
+    auto end_1 = std::chrono::high_resolution_clock::now();
 
-    auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start);
-    printTimeTaken(duration / 1e6);
-    printContainer(res);
+    auto duration_1 = std::chrono::duration_cast<std::chrono::milliseconds>(end_1 - start_1);
+    printTimeTaken(duration_1);
+    printContainer(res_1);
+
+    tokenizer_t file_one_2("testcases/two/one.cpp");
+    tokenizer_t file_two_2("testcases/two/two.cpp");
+    std::vector<int> v1_2 = file_one_2.get_tokens();
+    std::vector<int> v2_2 = file_two_2.get_tokens();
+
+    auto start_2 = std::chrono::high_resolution_clock::now();
+    std::array<int, 5> res_2 = match_submissions(v1_2, v2_2);
+    auto end_2 = std::chrono::high_resolution_clock::now();
+
+    auto duration_2 = std::chrono::duration_cast<std::chrono::milliseconds>(end_2 - start_2);
+    printTimeTaken(duration_2);
+    printContainer(res_2);
+
+    tokenizer_t file_one_3("testcases/three/one.cpp");
+    tokenizer_t file_two_3("testcases/three/two.cpp");
+    std::vector<int> v1_3 = file_one_3.get_tokens();
+    std::vector<int> v2_3 = file_two_3.get_tokens();
+
+    auto start_3 = std::chrono::high_resolution_clock::now();
+    std::array<int, 5> res_3 = match_submissions(v1_3, v2_3);
+    auto end_3 = std::chrono::high_resolution_clock::now();
+
+    auto duration_3 = std::chrono::duration_cast<std::chrono::milliseconds>(end_3 - start_3);
+    printTimeTaken(duration_3);
+    printContainer(res_3);
+
 #else
     std::vector<int> v1 = {};
     for (int i = 0; i < v1.size(); i++) {
