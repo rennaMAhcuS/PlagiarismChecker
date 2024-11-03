@@ -35,6 +35,6 @@ RUN echo "\
     export LDFLAGS='-fuse-ld=lld'\n\
     export CSTRICT='-fsanitize=address,undefined,leak,bounds -Werror'\n\
     export CTHREAD='-fsanitize=thread,undefined,bounds -Werror'\n\
-    export LSAN_OPTIONS=suppressions=/root/.lsan.supp\n" >> ~/.bashrc
+    export LSAN_OPTIONS=suppressions=${HOME}/.lsan.supp\n" >> ~/.bashrc
 
 CMD ["bash"]

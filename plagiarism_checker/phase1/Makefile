@@ -14,8 +14,13 @@ test: test.cpp tokenizer.cpp
 	./test
 	rm -rf test.dSYM test
 
+score: score.cpp tokenizer.cpp
+	$(CXX) $(CXXFLAGS) $(INCLUDEFLAGS) $(LDFLAGS) $^ -o $@
+	./score
+	rm -rf score.dSYM score
+
 clean:
 	rm main test
 	rm -rf *.dSYM
 
-.PHONY: main test clean
+.PHONY: main test score clean

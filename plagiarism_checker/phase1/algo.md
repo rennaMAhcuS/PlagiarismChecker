@@ -1,10 +1,11 @@
-Yes, we can improve on the \(O(n \times m^2)\) complexity by using **suffix arrays** and **Longest Common Substring (LCS)** techniques optimized for approximate matching. Let’s walk through a more efficient approach that avoids recalculating the LCS for each sliding window.
+Yes, we can improve on the $O(n \times m^2)$ complexity by using **suffix arrays** and **Longest Common Substring (LCS)** techniques optimized for approximate matching. Let’s walk through a more efficient approach that avoids recalculating the LCS for each sliding window.
 
 ### Optimized Approach Using Suffix Arrays and Longest Common Substring
 
 #### Key Ideas
 
 1. **Use Suffix Arrays and Longest Common Prefix (LCP) Array**:
+
    - A suffix array is a data structure that allows efficient querying of longest common substrings between two sequences.
    - The LCP array can then be used to determine the longest common prefixes between suffixes of `v1` and `v2`.
 
@@ -15,9 +16,10 @@ Yes, we can improve on the \(O(n \times m^2)\) complexity by using **suffix arra
 
 1. **Concatenate `v1` and `v2`** with a unique separator (e.g., `-1` if the vectors only contain positive numbers). This creates a single combined vector `v` that helps us work on both vectors simultaneously.
 
-2. **Construct the Suffix Array and LCP Array** for the concatenated vector `v`. Constructing a suffix array typically takes \(O((n + m) \log (n + m))\), and the LCP array takes \(O(n + m)\) with efficient algorithms.
+2. **Construct the Suffix Array and LCP Array** for the concatenated vector `v`. Constructing a suffix array typically takes $O((n + m) \log (n + m))$, and the LCP array takes $O(n + m)$ with efficient algorithms.
 
 3. **Find Longest Common Substring Using LCP**:
+
    - Using the LCP array, we can efficiently find the longest common substrings between suffixes that start in `v1` and those that start in `v2`.
    - We filter these results to find substrings that meet the 80% length criterion.
 
@@ -27,19 +29,19 @@ Yes, we can improve on the \(O(n \times m^2)\) complexity by using **suffix arra
 
 #### Complexity Analysis
 
-1. **Suffix Array Construction**: \(O((n + m) \log (n + m))\)
-2. **LCP Array Construction**: \(O(n + m)\)
-3. **Searching for Approximate Matches** using the LCP array: \(O(n + m)\)
+1. **Suffix Array Construction**: $O((n + m) \log (n + m))$
+2. **LCP Array Construction**: $O(n + m)$
+3. **Searching for Approximate Matches** using the LCP array: $O(n + m)$
 
 Overall, the time complexity of this optimized approach is:
 \[
 O((n + m) \log (n + m))
 \]
-This is significantly faster than the \(O(n \times m^2)\) complexity of the sliding window and DP approach, especially for large inputs.
+This is significantly faster than the $O(n \times m^2)$ complexity of the sliding window and DP approach, especially for large inputs.
 
 ### Summary of the Optimized Approach
 
-Using suffix arrays and LCP arrays leverages efficient substring matching across the two vectors without re-evaluating each window separately. This allows us to find the longest approximate match that satisfies the 80% requirement in much less time. 
+Using suffix arrays and LCP arrays leverages efficient substring matching across the two vectors without re-evaluating each window separately. This allows us to find the longest approximate match that satisfies the 80% requirement in much less time.
 
 This approach is particularly useful for cases where `v1` and `v2` are very large, as it reduces the complexity to near-linearithmic time with respect to the combined length of the vectors.
 
@@ -126,9 +128,11 @@ def build_lcp_array(arr, suffix_array):
 1. **Concatenation**: The two vectors `v1` and `v2` are concatenated with a unique separator to differentiate between the two sources. This helps in building suffixes that can be traced back to their original source.
 
 2. **Suffix Array Construction**:
+
    - The suffix array is built by sorting the starting indices of all suffixes of the combined vector. Each suffix is compared lexicographically.
 
 3. **LCP Array Construction**:
+
    - The LCP array is built using the suffix array to determine the longest common prefix lengths between sorted suffixes.
 
 4. **Finding Longest Approximate Match**:
@@ -138,12 +142,12 @@ def build_lcp_array(arr, suffix_array):
 
 ### Time Complexity
 
-- **Suffix Array Construction**: \(O((n + m) \log (n + m))\)
-- **LCP Array Construction**: \(O(n + m)\)
-- **Finding Matches**: \(O(n + m)\)
+- **Suffix Array Construction**: $O((n + m) \log (n + m))$
+- **LCP Array Construction**: $O(n + m)$
+- **Finding Matches**: $O(n + m)$
 
 Overall, the time complexity is:
 \[
 O((n + m) \log (n + m))
 \]
-This approach is more efficient than the previous \(O(n \times m^2)\) method, particularly for large vectors.
+This approach is more efficient than the previous $O(n \times m^2)$ method, particularly for large vectors.
