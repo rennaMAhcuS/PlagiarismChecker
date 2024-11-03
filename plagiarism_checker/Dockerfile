@@ -18,15 +18,14 @@ RUN useradd -ms /bin/bash ${USERNAME} && \
     echo "${USERNAME}:huffman" | chpasswd && \
     usermod -aG sudo ${USERNAME}
 
+RUN mkdir -p /home/${USERNAME}/plagiarism_checker && chown -R ${USERNAME}:${USERNAME} /home/${USERNAME}/plagiarism_checker
 USER ${USERNAME}
-
 WORKDIR /home/${USERNAME}/plagiarism_checker
 
 RUN echo "\
     leak:llvm\n\
     leak:_fetchInitializingClassList\n\
     leak:__Balloc_D2A" >> ~/.lsan.supp
-
 RUN echo "\
     export CXX=clang++\n\
     export CC=clang\n\
