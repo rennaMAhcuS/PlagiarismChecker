@@ -142,7 +142,7 @@ int numExactMatches(const std::vector<int>& v1, const std::vector<int>& v2) {
     // i -> length of pattern
     // j -> start index of pattern
     // 40 is the best value for running the code (from observation)
-    for (int i = 15; i >= 10; i--) {
+    for (int i = 40; i >= 10; i--) {
         for (int j = 0; j < n - i + 1; j++) {
             std::vector<int> pattern(v1.begin() + j, v1.begin() + j + i);
             // adjusting to get kmp table of v1[j : j + i]
@@ -176,23 +176,20 @@ std::array<int, 3> longestApproxMatch(std::vector<int>& v1,
                                       std::vector<int>& v2) {
     int n = v1.size(), m = v2.size();
 
-    std::vector<std::vector<int>> dp(n + 1, std::vector<int>(m + 1));
+    std::vector<std::vector<int>> dp(n, std::vector<int>(m));
 
     int maxLen = 0, maxI = 0, maxJ = 0;
-    for (int i = 1; i < n + 1; i++) {
-        for (int j = 1; j < m + 1; j++) {
-            if (v1[i - 1] != v2[j - 1]) {
-                dp[i][j] = 0;
-                continue;
-            }
-            dp[i][j] = dp[i - 1][j - 1] + 1;
-            int matchLen = dp[i][j];
-            int maxSubarrayLen = std::max(i, j);
-
-            if (matchLen >= 0.8 * maxSubarrayLen && matchLen > maxLen) {
-                maxLen = matchLen;
-                maxI = i - matchLen;
-                maxJ = j - matchLen;
+    for (int len = 1; len < n + 1 && len < m + 1; len++) {
+        for (int i = 0; i < n - len; i++) {
+            for (int j = 0; j < m - len; j++) {
+                if (v1[i + len] == v2[j + len]) {
+                    dp[i][j]++;
+                }
+                if (dp[i][j] > 0.8 * len) {
+                    maxLen = len;
+                    maxI = i;
+                    maxJ = j;
+                }
             }
         }
     }
