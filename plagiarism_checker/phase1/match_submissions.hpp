@@ -141,7 +141,7 @@ int numExactMatches(const std::vector<int>& v1, const std::vector<int>& v2) {
 
     // i -> length of pattern
     // j -> start index of pattern
-    for (int i = v2.size(); i >= 10; i--) {
+    for (int i = 20; i >= 10; i--) {
         for (int j = 0; j < n - i + 1; j++) {
             std::vector<int> pattern(v1.begin() + j, v1.begin() + j + i);
             // adjusting to get kmp table of v1[j : j + i]
