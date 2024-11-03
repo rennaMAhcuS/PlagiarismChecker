@@ -1,18 +1,16 @@
 #include "../tokenizer.hpp"
 #include "match_submissions.hpp"
 
-#define TEST_TOKENS_NO_KMP 1
-
 int main(void) {
-#if TEST_TOKENS_NO_KMP
-    tokenizer_t file_one_1("testcases/one/one.cpp");
-    tokenizer_t file_two_1("testcases/one/two.cpp");
+    tokenizer_t file_one_1("testcases/extra/one.cpp");
+    tokenizer_t file_two_1("testcases/extra/two.cpp");
     std::vector<int> v1_1 = file_one_1.get_tokens();
     std::vector<int> v2_1 = file_two_1.get_tokens();
 
     auto start_1 = std::chrono::high_resolution_clock::now();
     std::array<int, 5> res_1 = match_submissions(v1_1, v2_1);
     auto end_1 = std::chrono::high_resolution_clock::now();
+    std::cout << "Test case 1: " << std::endl;
 
     auto duration_1 = std::chrono::duration_cast<std::chrono::milliseconds>(end_1 - start_1);
     printTimeTaken(duration_1);
@@ -43,20 +41,4 @@ int main(void) {
     auto duration_3 = std::chrono::duration_cast<std::chrono::milliseconds>(end_3 - start_3);
     printTimeTaken(duration_3);
     printContainer(res_3);
-
-#else
-    std::vector<int> v1 = {};
-    for (int i = 0; i < v1.size(); i++) {
-        std::vector<int> temp(v1.begin() + i, v1.end());
-        std::vector<int> kmptable = kmp_table(temp);
-        printContainer(kmptable, " ");
-    }
-    std::cout << "-----------------------------\n";
-    for (int i = v1.size(); i > 0; i--) {
-        std::vector<int> temp(v1.begin(), v1.begin() + i);
-        std::vector<int> kmptable = kmp_table(temp);
-        printContainer(kmptable);
-    }
-#endif
-    return 0;
 }
