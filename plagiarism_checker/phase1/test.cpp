@@ -41,4 +41,18 @@ int main(void) {
     auto duration_3 = std::chrono::duration_cast<std::chrono::milliseconds>(end_3 - start_3);
     printTimeTaken(duration_3);
     printContainer(res_3);
+
+    // tokenizer_t file_one_3("testcases/extra/one.cpp");
+    // tokenizer_t file_two_3("testcases/extra/two.cpp");
+    // std::vector<int> v1_3 = file_one_3.get_tokens();
+    // std::vector<int> v2_3 = file_two_3.get_tokens();
+    //
+    // auto start_3 = std::chrono::high_resolution_clock::now();
+    // std::array<int, 5> res_3 = match_submissions(v1_3, v2_3);
+    // auto end_3 = std::chrono::high_resolution_clock::now();
+    //
+    // auto duration_3 = std::chrono::duration_cast<std::chrono::milliseconds>(end_3 - start_3);
+    // std::cout << v1_3.size() << " " << v2_3.size() << std::endl;
+    // printTimeTaken(duration_3);
+    // printContainer(res_3);
 }
