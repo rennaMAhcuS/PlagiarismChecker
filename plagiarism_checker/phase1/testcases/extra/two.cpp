@@ -6,61 +6,1829 @@ using namespace std;
 
 const int INF = numeric_limits<int>::max();
 
-struct Node {
-    int to, cost;
+struct Edge {
+    int destination, weight;
 };
 
-void shortestPath(int source, vector<vector<Node>> &adjList, vector<int> &distances) {
-    distances[source] = 0;
-    priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>> minHeap;
-    minHeap.push({0, source});
+void dijkstra(int start, vector<vector<Edge>> &graph, vector<int> &dist) {
+    dist[start] = 0;
+    priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>> pq;
+    pq.push({0, start});
 
-    while (!minHeap.empty()) {
-        int node = minHeap.top().second;
-        int nodeDist = minHeap.top().first;
-        minHeap.pop();
+    while (!pq.empty()) {
+        int current = pq.top().second;
+        int currentDist = pq.top().first;
+        pq.pop();
 
-        if (nodeDist > distances[node]) continue;
+        if (currentDist > dist[current]) continue;
 
-        for (auto &neighbor : adjList[node]) {
-            int neighborNode = neighbor.to;
-            int newDist = nodeDist + neighbor.cost;
+        for (auto &edge : graph[current]) {
+            int next = edge.destination;
+            int nextDist = currentDist + edge.weight;
 
-            if (newDist < distances[neighborNode]) {
-                distances[neighborNode] = newDist;
-                minHeap.push({newDist, neighborNode});
+            if (nextDist < dist[next]) {
+                dist[next] = nextDist;
+                pq.push({nextDist, next});
             }
         }
     }
 }
 
 int main() {
-    int vertices, edges;
-    cout << "Provide the number of vertices and edges: ";
-    cin >> vertices >> edges;
+    int n, m;
+    cout << "Enter number of nodes and edges: ";
+    cin >> n >> m;
 
-    vector<vector<Node>> adjList(vertices);
-    cout << "Enter edges as: start end weight\n";
-    for (int i = 0; i < edges; ++i) {
-        int start, end, weight;
-        cin >> start >> end >> weight;
-        adjList[start].push_back({end, weight});
-        adjList[end].push_back({start, weight});  // Assuming undirected graph
+    vector<vector<Edge>> graph(n);
+    cout << "Enter each edge in the format: source destination weight\n";
+    for (int i = 0; i < m; ++i) {
+        int u, v, w;
+        cin >> u >> v >> w;
+        graph[u].push_back({v, w});
+        graph[v].push_back({u, w});  // For undirected graph
     }
 
-    int source;
-    cout << "Specify the source node: ";
-    cin >> source;
+    int start;
+    cout << "Enter the start node: ";
+    cin >> start;
 
-    vector<int> distances(vertices, INF);
-    shortestPath(source, adjList, distances);
+    vector<int> dist(n, INF);
+    dijkstra(start, graph, dist);
 
-    cout << "Minimum distances from source node " << source << ":\n";
-    for (int i = 0; i < vertices; ++i) {
-        if (distances[i] == INF) {
-            cout << "Node " << i << " is not reachable\n";
+    cout << "Shortest distances from node " << start << ":\n";
+    for (int i = 0; i < n; ++i) {
+        if (dist[i] == INF) {
+            cout << "Node " << i << " is unreachable\n";
         } else {
-            cout << "Node " << i << ": " << distances[i] << "\n";
+            cout << "Node " << i << ": " << dist[i] << "\n";
+        }
+    }
+
+    return 0;
+}
+#include <iostream>
+#include <limits>
+#include <queue>
+#include <vector>
+using namespace std;
+
+const int INF = numeric_limits<int>::max();
+
+struct Edge {
+    int destination, weight;
+};
+
+void dijkstra(int start, vector<vector<Edge>> &graph, vector<int> &dist) {
+    dist[start] = 0;
+    priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>> pq;
+    pq.push({0, start});
+
+    while (!pq.empty()) {
+        int current = pq.top().second;
+        int currentDist = pq.top().first;
+        pq.pop();
+
+        if (currentDist > dist[current]) continue;
+
+        for (auto &edge : graph[current]) {
+            int next = edge.destination;
+            int nextDist = currentDist + edge.weight;
+
+            if (nextDist < dist[next]) {
+                dist[next] = nextDist;
+                pq.push({nextDist, next});
+            }
+        }
+    }
+}
+
+int main() {
+    int n, m;
+    cout << "Enter number of nodes and edges: ";
+    cin >> n >> m;
+
+    vector<vector<Edge>> graph(n);
+    cout << "Enter each edge in the format: source destination weight\n";
+    for (int i = 0; i < m; ++i) {
+        int u, v, w;
+        cin >> u >> v >> w;
+        graph[u].push_back({v, w});
+        graph[v].push_back({u, w});  // For undirected graph
+    }
+
+    int start;
+    cout << "Enter the start node: ";
+    cin >> start;
+
+    vector<int> dist(n, INF);
+    dijkstra(start, graph, dist);
+
+    cout << "Shortest distances from node " << start << ":\n";
+    for (int i = 0; i < n; ++i) {
+        if (dist[i] == INF) {
+            cout << "Node " << i << " is unreachable\n";
+        } else {
+            cout << "Node " << i << ": " << dist[i] << "\n";
+        }
+    }
+
+    return 0;
+}
+#include <iostream>
+#include <limits>
+#include <queue>
+#include <vector>
+using namespace std;
+
+const int INF = numeric_limits<int>::max();
+
+struct Edge {
+    int destination, weight;
+};
+
+void dijkstra(int start, vector<vector<Edge>> &graph, vector<int> &dist) {
+    dist[start] = 0;
+    priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>> pq;
+    pq.push({0, start});
+
+    while (!pq.empty()) {
+        int current = pq.top().second;
+        int currentDist = pq.top().first;
+        pq.pop();
+
+        if (currentDist > dist[current]) continue;
+
+        for (auto &edge : graph[current]) {
+            int next = edge.destination;
+            int nextDist = currentDist + edge.weight;
+
+            if (nextDist < dist[next]) {
+                dist[next] = nextDist;
+                pq.push({nextDist, next});
+            }
+        }
+    }
+}
+
+int main() {
+    int n, m;
+    cout << "Enter number of nodes and edges: ";
+    cin >> n >> m;
+
+    vector<vector<Edge>> graph(n);
+    cout << "Enter each edge in the format: source destination weight\n";
+    for (int i = 0; i < m; ++i) {
+        int u, v, w;
+        cin >> u >> v >> w;
+        graph[u].push_back({v, w});
+        graph[v].push_back({u, w});  // For undirected graph
+    }
+
+    int start;
+    cout << "Enter the start node: ";
+    cin >> start;
+
+    vector<int> dist(n, INF);
+    dijkstra(start, graph, dist);
+
+    cout << "Shortest distances from node " << start << ":\n";
+    for (int i = 0; i < n; ++i) {
+        if (dist[i] == INF) {
+            cout << "Node " << i << " is unreachable\n";
+        } else {
+            cout << "Node " << i << ": " << dist[i] << "\n";
+        }
+    }
+
+    return 0;
+}
+#include <iostream>
+#include <limits>
+#include <queue>
+#include <vector>
+using namespace std;
+
+const int INF = numeric_limits<int>::max();
+
+struct Edge {
+    int destination, weight;
+};
+
+void dijkstra(int start, vector<vector<Edge>> &graph, vector<int> &dist) {
+    dist[start] = 0;
+    priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>> pq;
+    pq.push({0, start});
+
+    while (!pq.empty()) {
+        int current = pq.top().second;
+        int currentDist = pq.top().first;
+        pq.pop();
+
+        if (currentDist > dist[current]) continue;
+
+        for (auto &edge : graph[current]) {
+            int next = edge.destination;
+            int nextDist = currentDist + edge.weight;
+
+            if (nextDist < dist[next]) {
+                dist[next] = nextDist;
+                pq.push({nextDist, next});
+            }
+        }
+    }
+}
+
+int main() {
+    int n, m;
+    cout << "Enter number of nodes and edges: ";
+    cin >> n >> m;
+
+    vector<vector<Edge>> graph(n);
+    cout << "Enter each edge in the format: source destination weight\n";
+    for (int i = 0; i < m; ++i) {
+        int u, v, w;
+        cin >> u >> v >> w;
+        graph[u].push_back({v, w});
+        graph[v].push_back({u, w});  // For undirected graph
+    }
+
+    int start;
+    cout << "Enter the start node: ";
+    cin >> start;
+
+    vector<int> dist(n, INF);
+    dijkstra(start, graph, dist);
+
+    cout << "Shortest distances from node " << start << ":\n";
+    for (int i = 0; i < n; ++i) {
+        if (dist[i] == INF) {
+            cout << "Node " << i << " is unreachable\n";
+        } else {
+            cout << "Node " << i << ": " << dist[i] << "\n";
+        }
+    }
+
+    return 0;
+}
+#include <iostream>
+#include <limits>
+#include <queue>
+#include <vector>
+using namespace std;
+
+const int INF = numeric_limits<int>::max();
+
+struct Edge {
+    int destination, weight;
+};
+
+void dijkstra(int start, vector<vector<Edge>> &graph, vector<int> &dist) {
+    dist[start] = 0;
+    priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>> pq;
+    pq.push({0, start});
+
+    while (!pq.empty()) {
+        int current = pq.top().second;
+        int currentDist = pq.top().first;
+        pq.pop();
+
+        if (currentDist > dist[current]) continue;
+
+        for (auto &edge : graph[current]) {
+            int next = edge.destination;
+            int nextDist = currentDist + edge.weight;
+
+            if (nextDist < dist[next]) {
+                dist[next] = nextDist;
+                pq.push({nextDist, next});
+            }
+        }
+    }
+}
+
+int main() {
+    int n, m;
+    cout << "Enter number of nodes and edges: ";
+    cin >> n >> m;
+
+    vector<vector<Edge>> graph(n);
+    cout << "Enter each edge in the format: source destination weight\n";
+    for (int i = 0; i < m; ++i) {
+        int u, v, w;
+        cin >> u >> v >> w;
+        graph[u].push_back({v, w});
+        graph[v].push_back({u, w});  // For undirected graph
+    }
+
+    int start;
+    cout << "Enter the start node: ";
+    cin >> start;
+
+    vector<int> dist(n, INF);
+    dijkstra(start, graph, dist);
+
+    cout << "Shortest distances from node " << start << ":\n";
+    for (int i = 0; i < n; ++i) {
+        if (dist[i] == INF) {
+            cout << "Node " << i << " is unreachable\n";
+        } else {
+            cout << "Node " << i << ": " << dist[i] << "\n";
+        }
+    }
+
+    return 0;
+}
+#include <iostream>
+#include <limits>
+#include <queue>
+#include <vector>
+using namespace std;
+
+const int INF = numeric_limits<int>::max();
+
+struct Edge {
+    int destination, weight;
+};
+
+void dijkstra(int start, vector<vector<Edge>> &graph, vector<int> &dist) {
+    dist[start] = 0;
+    priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>> pq;
+    pq.push({0, start});
+
+    while (!pq.empty()) {
+        int current = pq.top().second;
+        int currentDist = pq.top().first;
+        pq.pop();
+
+        if (currentDist > dist[current]) continue;
+
+        for (auto &edge : graph[current]) {
+            int next = edge.destination;
+            int nextDist = currentDist + edge.weight;
+
+            if (nextDist < dist[next]) {
+                dist[next] = nextDist;
+                pq.push({nextDist, next});
+            }
+        }
+    }
+}
+
+int main() {
+    int n, m;
+    cout << "Enter number of nodes and edges: ";
+    cin >> n >> m;
+
+    vector<vector<Edge>> graph(n);
+    cout << "Enter each edge in the format: source destination weight\n";
+    for (int i = 0; i < m; ++i) {
+        int u, v, w;
+        cin >> u >> v >> w;
+        graph[u].push_back({v, w});
+        graph[v].push_back({u, w});  // For undirected graph
+    }
+
+    int start;
+    cout << "Enter the start node: ";
+    cin >> start;
+
+    vector<int> dist(n, INF);
+    dijkstra(start, graph, dist);
+
+    cout << "Shortest distances from node " << start << ":\n";
+    for (int i = 0; i < n; ++i) {
+        if (dist[i] == INF) {
+            cout << "Node " << i << " is unreachable\n";
+        } else {
+            cout << "Node " << i << ": " << dist[i] << "\n";
+        }
+    }
+
+    return 0;
+}
+#include <iostream>
+#include <limits>
+#include <queue>
+#include <vector>
+using namespace std;
+
+const int INF = numeric_limits<int>::max();
+
+struct Edge {
+    int destination, weight;
+};
+
+void dijkstra(int start, vector<vector<Edge>> &graph, vector<int> &dist) {
+    dist[start] = 0;
+    priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>> pq;
+    pq.push({0, start});
+
+    while (!pq.empty()) {
+        int current = pq.top().second;
+        int currentDist = pq.top().first;
+        pq.pop();
+
+        if (currentDist > dist[current]) continue;
+
+        for (auto &edge : graph[current]) {
+            int next = edge.destination;
+            int nextDist = currentDist + edge.weight;
+
+            if (nextDist < dist[next]) {
+                dist[next] = nextDist;
+                pq.push({nextDist, next});
+            }
+        }
+    }
+}
+
+int main() {
+    int n, m;
+    cout << "Enter number of nodes and edges: ";
+    cin >> n >> m;
+
+    vector<vector<Edge>> graph(n);
+    cout << "Enter each edge in the format: source destination weight\n";
+    for (int i = 0; i < m; ++i) {
+        int u, v, w;
+        cin >> u >> v >> w;
+        graph[u].push_back({v, w});
+        graph[v].push_back({u, w});  // For undirected graph
+    }
+
+    int start;
+    cout << "Enter the start node: ";
+    cin >> start;
+
+    vector<int> dist(n, INF);
+    dijkstra(start, graph, dist);
+
+    cout << "Shortest distances from node " << start << ":\n";
+    for (int i = 0; i < n; ++i) {
+        if (dist[i] == INF) {
+            cout << "Node " << i << " is unreachable\n";
+        } else {
+            cout << "Node " << i << ": " << dist[i] << "\n";
+        }
+    }
+
+    return 0;
+}
+#include <iostream>
+#include <limits>
+#include <queue>
+#include <vector>
+using namespace std;
+
+const int INF = numeric_limits<int>::max();
+
+struct Edge {
+    int destination, weight;
+};
+
+void dijkstra(int start, vector<vector<Edge>> &graph, vector<int> &dist) {
+    dist[start] = 0;
+    priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>> pq;
+    pq.push({0, start});
+
+    while (!pq.empty()) {
+        int current = pq.top().second;
+        int currentDist = pq.top().first;
+        pq.pop();
+
+        if (currentDist > dist[current]) continue;
+
+        for (auto &edge : graph[current]) {
+            int next = edge.destination;
+            int nextDist = currentDist + edge.weight;
+
+            if (nextDist < dist[next]) {
+                dist[next] = nextDist;
+                pq.push({nextDist, next});
+            }
+        }
+    }
+}
+
+int main() {
+    int n, m;
+    cout << "Enter number of nodes and edges: ";
+    cin >> n >> m;
+
+    vector<vector<Edge>> graph(n);
+    cout << "Enter each edge in the format: source destination weight\n";
+    for (int i = 0; i < m; ++i) {
+        int u, v, w;
+        cin >> u >> v >> w;
+        graph[u].push_back({v, w});
+        graph[v].push_back({u, w});  // For undirected graph
+    }
+
+    int start;
+    cout << "Enter the start node: ";
+    cin >> start;
+
+    vector<int> dist(n, INF);
+    dijkstra(start, graph, dist);
+
+    cout << "Shortest distances from node " << start << ":\n";
+    for (int i = 0; i < n; ++i) {
+        if (dist[i] == INF) {
+            cout << "Node " << i << " is unreachable\n";
+        } else {
+            cout << "Node " << i << ": " << dist[i] << "\n";
+        }
+    }
+
+    return 0;
+}
+#include <iostream>
+#include <limits>
+#include <queue>
+#include <vector>
+using namespace std;
+
+const int INF = numeric_limits<int>::max();
+
+struct Edge {
+    int destination, weight;
+};
+
+void dijkstra(int start, vector<vector<Edge>> &graph, vector<int> &dist) {
+    dist[start] = 0;
+    priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>> pq;
+    pq.push({0, start});
+
+    while (!pq.empty()) {
+        int current = pq.top().second;
+        int currentDist = pq.top().first;
+        pq.pop();
+
+        if (currentDist > dist[current]) continue;
+
+        for (auto &edge : graph[current]) {
+            int next = edge.destination;
+            int nextDist = currentDist + edge.weight;
+
+            if (nextDist < dist[next]) {
+                dist[next] = nextDist;
+                pq.push({nextDist, next});
+            }
+        }
+    }
+}
+
+int main() {
+    int n, m;
+    cout << "Enter number of nodes and edges: ";
+    cin >> n >> m;
+
+    vector<vector<Edge>> graph(n);
+    cout << "Enter each edge in the format: source destination weight\n";
+    for (int i = 0; i < m; ++i) {
+        int u, v, w;
+        cin >> u >> v >> w;
+        graph[u].push_back({v, w});
+        graph[v].push_back({u, w});  // For undirected graph
+    }
+
+    int start;
+    cout << "Enter the start node: ";
+    cin >> start;
+
+    vector<int> dist(n, INF);
+    dijkstra(start, graph, dist);
+
+    cout << "Shortest distances from node " << start << ":\n";
+    for (int i = 0; i < n; ++i) {
+        if (dist[i] == INF) {
+            cout << "Node " << i << " is unreachable\n";
+        } else {
+            cout << "Node " << i << ": " << dist[i] << "\n";
+        }
+    }
+
+    return 0;
+}
+#include <iostream>
+#include <limits>
+#include <queue>
+#include <vector>
+using namespace std;
+
+const int INF = numeric_limits<int>::max();
+
+struct Edge {
+    int destination, weight;
+};
+
+void dijkstra(int start, vector<vector<Edge>> &graph, vector<int> &dist) {
+    dist[start] = 0;
+    priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>> pq;
+    pq.push({0, start});
+
+    while (!pq.empty()) {
+        int current = pq.top().second;
+        int currentDist = pq.top().first;
+        pq.pop();
+
+        if (currentDist > dist[current]) continue;
+
+        for (auto &edge : graph[current]) {
+            int next = edge.destination;
+            int nextDist = currentDist + edge.weight;
+
+            if (nextDist < dist[next]) {
+                dist[next] = nextDist;
+                pq.push({nextDist, next});
+            }
+        }
+    }
+}
+
+int main() {
+    int n, m;
+    cout << "Enter number of nodes and edges: ";
+    cin >> n >> m;
+
+    vector<vector<Edge>> graph(n);
+    cout << "Enter each edge in the format: source destination weight\n";
+    for (int i = 0; i < m; ++i) {
+        int u, v, w;
+        cin >> u >> v >> w;
+        graph[u].push_back({v, w});
+        graph[v].push_back({u, w});  // For undirected graph
+    }
+
+    int start;
+    cout << "Enter the start node: ";
+    cin >> start;
+
+    vector<int> dist(n, INF);
+    dijkstra(start, graph, dist);
+
+    cout << "Shortest distances from node " << start << ":\n";
+    for (int i = 0; i < n; ++i) {
+        if (dist[i] == INF) {
+            cout << "Node " << i << " is unreachable\n";
+        } else {
+            cout << "Node " << i << ": " << dist[i] << "\n";
+        }
+    }
+
+    return 0;
+}
+#include <iostream>
+#include <limits>
+#include <queue>
+#include <vector>
+using namespace std;
+
+const int INF = numeric_limits<int>::max();
+
+struct Edge {
+    int destination, weight;
+};
+
+void dijkstra(int start, vector<vector<Edge>> &graph, vector<int> &dist) {
+    dist[start] = 0;
+    priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>> pq;
+    pq.push({0, start});
+
+    while (!pq.empty()) {
+        int current = pq.top().second;
+        int currentDist = pq.top().first;
+        pq.pop();
+
+        if (currentDist > dist[current]) continue;
+
+        for (auto &edge : graph[current]) {
+            int next = edge.destination;
+            int nextDist = currentDist + edge.weight;
+
+            if (nextDist < dist[next]) {
+                dist[next] = nextDist;
+                pq.push({nextDist, next});
+            }
+        }
+    }
+}
+
+int main() {
+    int n, m;
+    cout << "Enter number of nodes and edges: ";
+    cin >> n >> m;
+
+    vector<vector<Edge>> graph(n);
+    cout << "Enter each edge in the format: source destination weight\n";
+    for (int i = 0; i < m; ++i) {
+        int u, v, w;
+        cin >> u >> v >> w;
+        graph[u].push_back({v, w});
+        graph[v].push_back({u, w});  // For undirected graph
+    }
+
+    int start;
+    cout << "Enter the start node: ";
+    cin >> start;
+
+    vector<int> dist(n, INF);
+    dijkstra(start, graph, dist);
+
+    cout << "Shortest distances from node " << start << ":\n";
+    for (int i = 0; i < n; ++i) {
+        if (dist[i] == INF) {
+            cout << "Node " << i << " is unreachable\n";
+        } else {
+            cout << "Node " << i << ": " << dist[i] << "\n";
+        }
+    }
+
+    return 0;
+}
+#include <iostream>
+#include <limits>
+#include <queue>
+#include <vector>
+using namespace std;
+
+const int INF = numeric_limits<int>::max();
+
+struct Edge {
+    int destination, weight;
+};
+
+void dijkstra(int start, vector<vector<Edge>> &graph, vector<int> &dist) {
+    dist[start] = 0;
+    priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>> pq;
+    pq.push({0, start});
+
+    while (!pq.empty()) {
+        int current = pq.top().second;
+        int currentDist = pq.top().first;
+        pq.pop();
+
+        if (currentDist > dist[current]) continue;
+
+        for (auto &edge : graph[current]) {
+            int next = edge.destination;
+            int nextDist = currentDist + edge.weight;
+
+            if (nextDist < dist[next]) {
+                dist[next] = nextDist;
+                pq.push({nextDist, next});
+            }
+        }
+    }
+}
+
+int main() {
+    int n, m;
+    cout << "Enter number of nodes and edges: ";
+    cin >> n >> m;
+
+    vector<vector<Edge>> graph(n);
+    cout << "Enter each edge in the format: source destination weight\n";
+    for (int i = 0; i < m; ++i) {
+        int u, v, w;
+        cin >> u >> v >> w;
+        graph[u].push_back({v, w});
+        graph[v].push_back({u, w});  // For undirected graph
+    }
+
+    int start;
+    cout << "Enter the start node: ";
+    cin >> start;
+
+    vector<int> dist(n, INF);
+    dijkstra(start, graph, dist);
+
+    cout << "Shortest distances from node " << start << ":\n";
+    for (int i = 0; i < n; ++i) {
+        if (dist[i] == INF) {
+            cout << "Node " << i << " is unreachable\n";
+        } else {
+            cout << "Node " << i << ": " << dist[i] << "\n";
+        }
+    }
+
+    return 0;
+}
+#include <iostream>
+#include <limits>
+#include <queue>
+#include <vector>
+using namespace std;
+
+const int INF = numeric_limits<int>::max();
+
+struct Edge {
+    int destination, weight;
+};
+
+void dijkstra(int start, vector<vector<Edge>> &graph, vector<int> &dist) {
+    dist[start] = 0;
+    priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>> pq;
+    pq.push({0, start});
+
+    while (!pq.empty()) {
+        int current = pq.top().second;
+        int currentDist = pq.top().first;
+        pq.pop();
+
+        if (currentDist > dist[current]) continue;
+
+        for (auto &edge : graph[current]) {
+            int next = edge.destination;
+            int nextDist = currentDist + edge.weight;
+
+            if (nextDist < dist[next]) {
+                dist[next] = nextDist;
+                pq.push({nextDist, next});
+            }
+        }
+    }
+}
+
+int main() {
+    int n, m;
+    cout << "Enter number of nodes and edges: ";
+    cin >> n >> m;
+
+    vector<vector<Edge>> graph(n);
+    cout << "Enter each edge in the format: source destination weight\n";
+    for (int i = 0; i < m; ++i) {
+        int u, v, w;
+        cin >> u >> v >> w;
+        graph[u].push_back({v, w});
+        graph[v].push_back({u, w});  // For undirected graph
+    }
+
+    int start;
+    cout << "Enter the start node: ";
+    cin >> start;
+
+    vector<int> dist(n, INF);
+    dijkstra(start, graph, dist);
+
+    cout << "Shortest distances from node " << start << ":\n";
+    for (int i = 0; i < n; ++i) {
+        if (dist[i] == INF) {
+            cout << "Node " << i << " is unreachable\n";
+        } else {
+            cout << "Node " << i << ": " << dist[i] << "\n";
+        }
+    }
+
+    return 0;
+}
+#include <iostream>
+#include <limits>
+#include <queue>
+#include <vector>
+using namespace std;
+
+const int INF = numeric_limits<int>::max();
+
+struct Edge {
+    int destination, weight;
+};
+
+void dijkstra(int start, vector<vector<Edge>> &graph, vector<int> &dist) {
+    dist[start] = 0;
+    priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>> pq;
+    pq.push({0, start});
+
+    while (!pq.empty()) {
+        int current = pq.top().second;
+        int currentDist = pq.top().first;
+        pq.pop();
+
+        if (currentDist > dist[current]) continue;
+
+        for (auto &edge : graph[current]) {
+            int next = edge.destination;
+            int nextDist = currentDist + edge.weight;
+
+            if (nextDist < dist[next]) {
+                dist[next] = nextDist;
+                pq.push({nextDist, next});
+            }
+        }
+    }
+}
+
+int main() {
+    int n, m;
+    cout << "Enter number of nodes and edges: ";
+    cin >> n >> m;
+
+    vector<vector<Edge>> graph(n);
+    cout << "Enter each edge in the format: source destination weight\n";
+    for (int i = 0; i < m; ++i) {
+        int u, v, w;
+        cin >> u >> v >> w;
+        graph[u].push_back({v, w});
+        graph[v].push_back({u, w});  // For undirected graph
+    }
+
+    int start;
+    cout << "Enter the start node: ";
+    cin >> start;
+
+    vector<int> dist(n, INF);
+    dijkstra(start, graph, dist);
+
+    cout << "Shortest distances from node " << start << ":\n";
+    for (int i = 0; i < n; ++i) {
+        if (dist[i] == INF) {
+            cout << "Node " << i << " is unreachable\n";
+        } else {
+            cout << "Node " << i << ": " << dist[i] << "\n";
+        }
+    }
+
+    return 0;
+}
+#include <iostream>
+#include <limits>
+#include <queue>
+#include <vector>
+using namespace std;
+
+const int INF = numeric_limits<int>::max();
+
+struct Edge {
+    int destination, weight;
+};
+
+void dijkstra(int start, vector<vector<Edge>> &graph, vector<int> &dist) {
+    dist[start] = 0;
+    priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>> pq;
+    pq.push({0, start});
+
+    while (!pq.empty()) {
+        int current = pq.top().second;
+        int currentDist = pq.top().first;
+        pq.pop();
+
+        if (currentDist > dist[current]) continue;
+
+        for (auto &edge : graph[current]) {
+            int next = edge.destination;
+            int nextDist = currentDist + edge.weight;
+
+            if (nextDist < dist[next]) {
+                dist[next] = nextDist;
+                pq.push({nextDist, next});
+            }
+        }
+    }
+}
+
+int main() {
+    int n, m;
+    cout << "Enter number of nodes and edges: ";
+    cin >> n >> m;
+
+    vector<vector<Edge>> graph(n);
+    cout << "Enter each edge in the format: source destination weight\n";
+    for (int i = 0; i < m; ++i) {
+        int u, v, w;
+        cin >> u >> v >> w;
+        graph[u].push_back({v, w});
+        graph[v].push_back({u, w});  // For undirected graph
+    }
+
+    int start;
+    cout << "Enter the start node: ";
+    cin >> start;
+
+    vector<int> dist(n, INF);
+    dijkstra(start, graph, dist);
+
+    cout << "Shortest distances from node " << start << ":\n";
+    for (int i = 0; i < n; ++i) {
+        if (dist[i] == INF) {
+            cout << "Node " << i << " is unreachable\n";
+        } else {
+            cout << "Node " << i << ": " << dist[i] << "\n";
+        }
+    }
+
+    return 0;
+}
+#include <iostream>
+#include <limits>
+#include <queue>
+#include <vector>
+using namespace std;
+
+const int INF = numeric_limits<int>::max();
+
+struct Edge {
+    int destination, weight;
+};
+
+void dijkstra(int start, vector<vector<Edge>> &graph, vector<int> &dist) {
+    dist[start] = 0;
+    priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>> pq;
+    pq.push({0, start});
+
+    while (!pq.empty()) {
+        int current = pq.top().second;
+        int currentDist = pq.top().first;
+        pq.pop();
+
+        if (currentDist > dist[current]) continue;
+
+        for (auto &edge : graph[current]) {
+            int next = edge.destination;
+            int nextDist = currentDist + edge.weight;
+
+            if (nextDist < dist[next]) {
+                dist[next] = nextDist;
+                pq.push({nextDist, next});
+            }
+        }
+    }
+}
+
+int main() {
+    int n, m;
+    cout << "Enter number of nodes and edges: ";
+    cin >> n >> m;
+
+    vector<vector<Edge>> graph(n);
+    cout << "Enter each edge in the format: source destination weight\n";
+    for (int i = 0; i < m; ++i) {
+        int u, v, w;
+        cin >> u >> v >> w;
+        graph[u].push_back({v, w});
+        graph[v].push_back({u, w});  // For undirected graph
+    }
+
+    int start;
+    cout << "Enter the start node: ";
+    cin >> start;
+
+    vector<int> dist(n, INF);
+    dijkstra(start, graph, dist);
+
+    cout << "Shortest distances from node " << start << ":\n";
+    for (int i = 0; i < n; ++i) {
+        if (dist[i] == INF) {
+            cout << "Node " << i << " is unreachable\n";
+        } else {
+            cout << "Node " << i << ": " << dist[i] << "\n";
+        }
+    }
+
+    return 0;
+}
+#include <iostream>
+#include <limits>
+#include <queue>
+#include <vector>
+using namespace std;
+
+const int INF = numeric_limits<int>::max();
+
+struct Edge {
+    int destination, weight;
+};
+
+void dijkstra(int start, vector<vector<Edge>> &graph, vector<int> &dist) {
+    dist[start] = 0;
+    priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>> pq;
+    pq.push({0, start});
+
+    while (!pq.empty()) {
+        int current = pq.top().second;
+        int currentDist = pq.top().first;
+        pq.pop();
+
+        if (currentDist > dist[current]) continue;
+
+        for (auto &edge : graph[current]) {
+            int next = edge.destination;
+            int nextDist = currentDist + edge.weight;
+
+            if (nextDist < dist[next]) {
+                dist[next] = nextDist;
+                pq.push({nextDist, next});
+            }
+        }
+    }
+}
+
+int main() {
+    int n, m;
+    cout << "Enter number of nodes and edges: ";
+    cin >> n >> m;
+
+    vector<vector<Edge>> graph(n);
+    cout << "Enter each edge in the format: source destination weight\n";
+    for (int i = 0; i < m; ++i) {
+        int u, v, w;
+        cin >> u >> v >> w;
+        graph[u].push_back({v, w});
+        graph[v].push_back({u, w});  // For undirected graph
+    }
+
+    int start;
+    cout << "Enter the start node: ";
+    cin >> start;
+
+    vector<int> dist(n, INF);
+    dijkstra(start, graph, dist);
+
+    cout << "Shortest distances from node " << start << ":\n";
+    for (int i = 0; i < n; ++i) {
+        if (dist[i] == INF) {
+            cout << "Node " << i << " is unreachable\n";
+        } else {
+            cout << "Node " << i << ": " << dist[i] << "\n";
+        }
+    }
+
+    return 0;
+}
+#include <iostream>
+#include <limits>
+#include <queue>
+#include <vector>
+using namespace std;
+
+const int INF = numeric_limits<int>::max();
+
+struct Edge {
+    int destination, weight;
+};
+
+void dijkstra(int start, vector<vector<Edge>> &graph, vector<int> &dist) {
+    dist[start] = 0;
+    priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>> pq;
+    pq.push({0, start});
+
+    while (!pq.empty()) {
+        int current = pq.top().second;
+        int currentDist = pq.top().first;
+        pq.pop();
+
+        if (currentDist > dist[current]) continue;
+
+        for (auto &edge : graph[current]) {
+            int next = edge.destination;
+            int nextDist = currentDist + edge.weight;
+
+            if (nextDist < dist[next]) {
+                dist[next] = nextDist;
+                pq.push({nextDist, next});
+            }
+        }
+    }
+}
+
+int main() {
+    int n, m;
+    cout << "Enter number of nodes and edges: ";
+    cin >> n >> m;
+
+    vector<vector<Edge>> graph(n);
+    cout << "Enter each edge in the format: source destination weight\n";
+    for (int i = 0; i < m; ++i) {
+        int u, v, w;
+        cin >> u >> v >> w;
+        graph[u].push_back({v, w});
+        graph[v].push_back({u, w});  // For undirected graph
+    }
+
+    int start;
+    cout << "Enter the start node: ";
+    cin >> start;
+
+    vector<int> dist(n, INF);
+    dijkstra(start, graph, dist);
+
+    cout << "Shortest distances from node " << start << ":\n";
+    for (int i = 0; i < n; ++i) {
+        if (dist[i] == INF) {
+            cout << "Node " << i << " is unreachable\n";
+        } else {
+            cout << "Node " << i << ": " << dist[i] << "\n";
+        }
+    }
+
+    return 0;
+}
+#include <iostream>
+#include <limits>
+#include <queue>
+#include <vector>
+using namespace std;
+
+const int INF = numeric_limits<int>::max();
+
+struct Edge {
+    int destination, weight;
+};
+
+void dijkstra(int start, vector<vector<Edge>> &graph, vector<int> &dist) {
+    dist[start] = 0;
+    priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>> pq;
+    pq.push({0, start});
+
+    while (!pq.empty()) {
+        int current = pq.top().second;
+        int currentDist = pq.top().first;
+        pq.pop();
+
+        if (currentDist > dist[current]) continue;
+
+        for (auto &edge : graph[current]) {
+            int next = edge.destination;
+            int nextDist = currentDist + edge.weight;
+
+            if (nextDist < dist[next]) {
+                dist[next] = nextDist;
+                pq.push({nextDist, next});
+            }
+        }
+    }
+}
+
+int main() {
+    int n, m;
+    cout << "Enter number of nodes and edges: ";
+    cin >> n >> m;
+
+    vector<vector<Edge>> graph(n);
+    cout << "Enter each edge in the format: source destination weight\n";
+    for (int i = 0; i < m; ++i) {
+        int u, v, w;
+        cin >> u >> v >> w;
+        graph[u].push_back({v, w});
+        graph[v].push_back({u, w});  // For undirected graph
+    }
+
+    int start;
+    cout << "Enter the start node: ";
+    cin >> start;
+
+    vector<int> dist(n, INF);
+    dijkstra(start, graph, dist);
+
+    cout << "Shortest distances from node " << start << ":\n";
+    for (int i = 0; i < n; ++i) {
+        if (dist[i] == INF) {
+            cout << "Node " << i << " is unreachable\n";
+        } else {
+            cout << "Node " << i << ": " << dist[i] << "\n";
+        }
+    }
+
+    return 0;
+}
+#include <iostream>
+#include <limits>
+#include <queue>
+#include <vector>
+using namespace std;
+
+const int INF = numeric_limits<int>::max();
+
+struct Edge {
+    int destination, weight;
+};
+
+void dijkstra(int start, vector<vector<Edge>> &graph, vector<int> &dist) {
+    dist[start] = 0;
+    priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>> pq;
+    pq.push({0, start});
+
+    while (!pq.empty()) {
+        int current = pq.top().second;
+        int currentDist = pq.top().first;
+        pq.pop();
+
+        if (currentDist > dist[current]) continue;
+
+        for (auto &edge : graph[current]) {
+            int next = edge.destination;
+            int nextDist = currentDist + edge.weight;
+
+            if (nextDist < dist[next]) {
+                dist[next] = nextDist;
+                pq.push({nextDist, next});
+            }
+        }
+    }
+}
+
+int main() {
+    int n, m;
+    cout << "Enter number of nodes and edges: ";
+    cin >> n >> m;
+
+    vector<vector<Edge>> graph(n);
+    cout << "Enter each edge in the format: source destination weight\n";
+    for (int i = 0; i < m; ++i) {
+        int u, v, w;
+        cin >> u >> v >> w;
+        graph[u].push_back({v, w});
+        graph[v].push_back({u, w});  // For undirected graph
+    }
+
+    int start;
+    cout << "Enter the start node: ";
+    cin >> start;
+
+    vector<int> dist(n, INF);
+    dijkstra(start, graph, dist);
+
+    cout << "Shortest distances from node " << start << ":\n";
+    for (int i = 0; i < n; ++i) {
+        if (dist[i] == INF) {
+            cout << "Node " << i << " is unreachable\n";
+        } else {
+            cout << "Node " << i << ": " << dist[i] << "\n";
+        }
+    }
+
+    return 0;
+}
+#include <iostream>
+#include <limits>
+#include <queue>
+#include <vector>
+using namespace std;
+
+const int INF = numeric_limits<int>::max();
+
+struct Edge {
+    int destination, weight;
+};
+
+void dijkstra(int start, vector<vector<Edge>> &graph, vector<int> &dist) {
+    dist[start] = 0;
+    priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>> pq;
+    pq.push({0, start});
+
+    while (!pq.empty()) {
+        int current = pq.top().second;
+        int currentDist = pq.top().first;
+        pq.pop();
+
+        if (currentDist > dist[current]) continue;
+
+        for (auto &edge : graph[current]) {
+            int next = edge.destination;
+            int nextDist = currentDist + edge.weight;
+
+            if (nextDist < dist[next]) {
+                dist[next] = nextDist;
+                pq.push({nextDist, next});
+            }
+        }
+    }
+}
+
+int main() {
+    int n, m;
+    cout << "Enter number of nodes and edges: ";
+    cin >> n >> m;
+
+    vector<vector<Edge>> graph(n);
+    cout << "Enter each edge in the format: source destination weight\n";
+    for (int i = 0; i < m; ++i) {
+        int u, v, w;
+        cin >> u >> v >> w;
+        graph[u].push_back({v, w});
+        graph[v].push_back({u, w});  // For undirected graph
+    }
+
+    int start;
+    cout << "Enter the start node: ";
+    cin >> start;
+
+    vector<int> dist(n, INF);
+    dijkstra(start, graph, dist);
+
+    cout << "Shortest distances from node " << start << ":\n";
+    for (int i = 0; i < n; ++i) {
+        if (dist[i] == INF) {
+            cout << "Node " << i << " is unreachable\n";
+        } else {
+            cout << "Node " << i << ": " << dist[i] << "\n";
+        }
+    }
+
+    return 0;
+}
+#include <iostream>
+#include <limits>
+#include <queue>
+#include <vector>
+using namespace std;
+
+const int INF = numeric_limits<int>::max();
+
+struct Edge {
+    int destination, weight;
+};
+
+void dijkstra(int start, vector<vector<Edge>> &graph, vector<int> &dist) {
+    dist[start] = 0;
+    priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>> pq;
+    pq.push({0, start});
+
+    while (!pq.empty()) {
+        int current = pq.top().second;
+        int currentDist = pq.top().first;
+        pq.pop();
+
+        if (currentDist > dist[current]) continue;
+
+        for (auto &edge : graph[current]) {
+            int next = edge.destination;
+            int nextDist = currentDist + edge.weight;
+
+            if (nextDist < dist[next]) {
+                dist[next] = nextDist;
+                pq.push({nextDist, next});
+            }
+        }
+    }
+}
+
+int main() {
+    int n, m;
+    cout << "Enter number of nodes and edges: ";
+    cin >> n >> m;
+
+    vector<vector<Edge>> graph(n);
+    cout << "Enter each edge in the format: source destination weight\n";
+    for (int i = 0; i < m; ++i) {
+        int u, v, w;
+        cin >> u >> v >> w;
+        graph[u].push_back({v, w});
+        graph[v].push_back({u, w});  // For undirected graph
+    }
+
+    int start;
+    cout << "Enter the start node: ";
+    cin >> start;
+
+    vector<int> dist(n, INF);
+    dijkstra(start, graph, dist);
+
+    cout << "Shortest distances from node " << start << ":\n";
+    for (int i = 0; i < n; ++i) {
+        if (dist[i] == INF) {
+            cout << "Node " << i << " is unreachable\n";
+        } else {
+            cout << "Node " << i << ": " << dist[i] << "\n";
+        }
+    }
+
+    return 0;
+}
+#include <iostream>
+#include <limits>
+#include <queue>
+#include <vector>
+using namespace std;
+
+const int INF = numeric_limits<int>::max();
+
+struct Edge {
+    int destination, weight;
+};
+
+void dijkstra(int start, vector<vector<Edge>> &graph, vector<int> &dist) {
+    dist[start] = 0;
+    priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>> pq;
+    pq.push({0, start});
+
+    while (!pq.empty()) {
+        int current = pq.top().second;
+        int currentDist = pq.top().first;
+        pq.pop();
+
+        if (currentDist > dist[current]) continue;
+
+        for (auto &edge : graph[current]) {
+            int next = edge.destination;
+            int nextDist = currentDist + edge.weight;
+
+            if (nextDist < dist[next]) {
+                dist[next] = nextDist;
+                pq.push({nextDist, next});
+            }
+        }
+    }
+}
+
+int main() {
+    int n, m;
+    cout << "Enter number of nodes and edges: ";
+    cin >> n >> m;
+
+    vector<vector<Edge>> graph(n);
+    cout << "Enter each edge in the format: source destination weight\n";
+    for (int i = 0; i < m; ++i) {
+        int u, v, w;
+        cin >> u >> v >> w;
+        graph[u].push_back({v, w});
+        graph[v].push_back({u, w});  // For undirected graph
+    }
+
+    int start;
+    cout << "Enter the start node: ";
+    cin >> start;
+
+    vector<int> dist(n, INF);
+    dijkstra(start, graph, dist);
+
+    cout << "Shortest distances from node " << start << ":\n";
+    for (int i = 0; i < n; ++i) {
+        if (dist[i] == INF) {
+            cout << "Node " << i << " is unreachable\n";
+        } else {
+            cout << "Node " << i << ": " << dist[i] << "\n";
+        }
+    }
+
+    return 0;
+}
+#include <iostream>
+#include <limits>
+#include <queue>
+#include <vector>
+using namespace std;
+
+const int INF = numeric_limits<int>::max();
+
+struct Edge {
+    int destination, weight;
+};
+
+void dijkstra(int start, vector<vector<Edge>> &graph, vector<int> &dist) {
+    dist[start] = 0;
+    priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>> pq;
+    pq.push({0, start});
+
+    while (!pq.empty()) {
+        int current = pq.top().second;
+        int currentDist = pq.top().first;
+        pq.pop();
+
+        if (currentDist > dist[current]) continue;
+
+        for (auto &edge : graph[current]) {
+            int next = edge.destination;
+            int nextDist = currentDist + edge.weight;
+
+            if (nextDist < dist[next]) {
+                dist[next] = nextDist;
+                pq.push({nextDist, next});
+            }
+        }
+    }
+}
+
+int main() {
+    int n, m;
+    cout << "Enter number of nodes and edges: ";
+    cin >> n >> m;
+
+    vector<vector<Edge>> graph(n);
+    cout << "Enter each edge in the format: source destination weight\n";
+    for (int i = 0; i < m; ++i) {
+        int u, v, w;
+        cin >> u >> v >> w;
+        graph[u].push_back({v, w});
+        graph[v].push_back({u, w});  // For undirected graph
+    }
+
+    int start;
+    cout << "Enter the start node: ";
+    cin >> start;
+
+    vector<int> dist(n, INF);
+    dijkstra(start, graph, dist);
+
+    cout << "Shortest distances from node " << start << ":\n";
+    for (int i = 0; i < n; ++i) {
+        if (dist[i] == INF) {
+            cout << "Node " << i << " is unreachable\n";
+        } else {
+            cout << "Node " << i << ": " << dist[i] << "\n";
+        }
+    }
+
+    return 0;
+}
+#include <iostream>
+#include <limits>
+#include <queue>
+#include <vector>
+using namespace std;
+
+const int INF = numeric_limits<int>::max();
+
+struct Edge {
+    int destination, weight;
+};
+
+void dijkstra(int start, vector<vector<Edge>> &graph, vector<int> &dist) {
+    dist[start] = 0;
+    priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>> pq;
+    pq.push({0, start});
+
+    while (!pq.empty()) {
+        int current = pq.top().second;
+        int currentDist = pq.top().first;
+        pq.pop();
+
+        if (currentDist > dist[current]) continue;
+
+        for (auto &edge : graph[current]) {
+            int next = edge.destination;
+            int nextDist = currentDist + edge.weight;
+
+            if (nextDist < dist[next]) {
+                dist[next] = nextDist;
+                pq.push({nextDist, next});
+            }
+        }
+    }
+}
+
+int main() {
+    int n, m;
+    cout << "Enter number of nodes and edges: ";
+    cin >> n >> m;
+
+    vector<vector<Edge>> graph(n);
+    cout << "Enter each edge in the format: source destination weight\n";
+    for (int i = 0; i < m; ++i) {
+        int u, v, w;
+        cin >> u >> v >> w;
+        graph[u].push_back({v, w});
+        graph[v].push_back({u, w});  // For undirected graph
+    }
+
+    int start;
+    cout << "Enter the start node: ";
+    cin >> start;
+
+    vector<int> dist(n, INF);
+    dijkstra(start, graph, dist);
+
+    cout << "Shortest distances from node " << start << ":\n";
+    for (int i = 0; i < n; ++i) {
+        if (dist[i] == INF) {
+            cout << "Node " << i << " is unreachable\n";
+        } else {
+            cout << "Node " << i << ": " << dist[i] << "\n";
+        }
+    }
+
+    return 0;
+}
+#include <iostream>
+#include <limits>
+#include <queue>
+#include <vector>
+using namespace std;
+
+const int INF = numeric_limits<int>::max();
+
+struct Edge {
+    int destination, weight;
+};
+
+void dijkstra(int start, vector<vector<Edge>> &graph, vector<int> &dist) {
+    dist[start] = 0;
+    priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>> pq;
+    pq.push({0, start});
+
+    while (!pq.empty()) {
+        int current = pq.top().second;
+        int currentDist = pq.top().first;
+        pq.pop();
+
+        if (currentDist > dist[current]) continue;
+
+        for (auto &edge : graph[current]) {
+            int next = edge.destination;
+            int nextDist = currentDist + edge.weight;
+
+            if (nextDist < dist[next]) {
+                dist[next] = nextDist;
+                pq.push({nextDist, next});
+            }
+        }
+    }
+}
+
+int main() {
+    int n, m;
+    cout << "Enter number of nodes and edges: ";
+    cin >> n >> m;
+
+    vector<vector<Edge>> graph(n);
+    cout << "Enter each edge in the format: source destination weight\n";
+    for (int i = 0; i < m; ++i) {
+        int u, v, w;
+        cin >> u >> v >> w;
+        graph[u].push_back({v, w});
+        graph[v].push_back({u, w});  // For undirected graph
+    }
+
+    int start;
+    cout << "Enter the start node: ";
+    cin >> start;
+
+    vector<int> dist(n, INF);
+    dijkstra(start, graph, dist);
+
+    cout << "Shortest distances from node " << start << ":\n";
+    for (int i = 0; i < n; ++i) {
+        if (dist[i] == INF) {
+            cout << "Node " << i << " is unreachable\n";
+        } else {
+            cout << "Node " << i << ": " << dist[i] << "\n";
+        }
+    }
+
+    return 0;
+}
+#include <iostream>
+#include <limits>
+#include <queue>
+#include <vector>
+using namespace std;
+
+const int INF = numeric_limits<int>::max();
+
+struct Edge {
+    int destination, weight;
+};
+
+void dijkstra(int start, vector<vector<Edge>> &graph, vector<int> &dist) {
+    dist[start] = 0;
+    priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>> pq;
+    pq.push({0, start});
+
+    while (!pq.empty()) {
+        int current = pq.top().second;
+        int currentDist = pq.top().first;
+        pq.pop();
+
+        if (currentDist > dist[current]) continue;
+
+        for (auto &edge : graph[current]) {
+            int next = edge.destination;
+            int nextDist = currentDist + edge.weight;
+
+            if (nextDist < dist[next]) {
+                dist[next] = nextDist;
+                pq.push({nextDist, next});
+            }
+        }
+    }
+}
+
+int main() {
+    int n, m;
+    cout << "Enter number of nodes and edges: ";
+    cin >> n >> m;
+
+    vector<vector<Edge>> graph(n);
+    cout << "Enter each edge in the format: source destination weight\n";
+    for (int i = 0; i < m; ++i) {
+        int u, v, w;
+        cin >> u >> v >> w;
+        graph[u].push_back({v, w});
+        graph[v].push_back({u, w});  // For undirected graph
+    }
+
+    int start;
+    cout << "Enter the start node: ";
+    cin >> start;
+
+    vector<int> dist(n, INF);
+    dijkstra(start, graph, dist);
+
+    cout << "Shortest distances from node " << start << ":\n";
+    for (int i = 0; i < n; ++i) {
+        if (dist[i] == INF) {
+            cout << "Node " << i << " is unreachable\n";
+        } else {
+            cout << "Node " << i << ": " << dist[i] << "\n";
         }
     }
 

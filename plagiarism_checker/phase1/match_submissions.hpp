@@ -6,6 +6,8 @@
 // -----------------------------------------------------------------------------
 #include <chrono>
 #include <string>
+// -----------------------------------------------------------------------------
+#include <unordered_map>
 
 #define TEST_NUM_MATCHES 0
 
@@ -51,124 +53,62 @@ void printContainerToFile(T& v, std::string filename) {
     fileStream.close();
 }
 
-// @param `p`: test vector
-// @return: kmp table of `p`
-std::vector<int> kmpTable(const std::vector<int>& p) {
-    int i = 1, j = 0;
-    std::vector<int> h(p.size() + 1);
-    h[0] = -1;
-    while (i < p.size()) {
-        if (p[j] != p[i]) {
-            h[i] = j;
-            while (j >= 0 && p[j] != p[i]) j = h[j];
-        } else
-            h[i] = h[j];
-        i++, j++;
-    }
-    h[p.size()] = j;
-    return h;
-}
-
-// @param `s`: test vector
-// @return: kmp table for all suffixes of `s`
-std::vector<std::vector<int>> allKmpTables(const std::vector<int>& s) {
-    std::vector<std::vector<int>> res(s.size());
-    for (int i = 0; i < s.size(); i++) {
-        std::vector<int> subvec(s.begin() + i, s.end());
-        res[i] = kmpTable(subvec);
-    }
-    return res;
-}
-
-// helper function for efficient `kmpTable` computation of all prefixes
-std::vector<int> calcLast(const std::vector<int>& givenKmpTable) {
-    if (givenKmpTable.empty()) return {};
-    std::vector<int> res = givenKmpTable;
-    int i = res.size() - 2;
-    while (i > 0) {
-        res[i] = res[i + 1] - 1 > res[i] ? res[i + 1] - 1 : res[i];
-        i--;
-    }
-    res[0] = -1;
-    return res;
-}
-
-// @param `s`: test vector
-// @param `p`: pattern
-// @param `h`: kmp table
-// @return: start indices of all matches
-std::vector<int> kmp(const std::vector<int>& s,
-                     const std::vector<int>& p,
-                     const std::vector<int>& h) {
-    if (p.empty()) throw std::invalid_argument("Pattern is empty");
-    int i = 0, j = 0;
-    std::vector<int> found;
-    while (i < s.size()) {
-        if (p[j] == s[i]) {
-            i++, j++;
-            if (j == p.size()) {
-                found.push_back(i - j);
-                j = h[j];
-            }
-        } else {
-            j = h[j];
-            if (j < 0) {
-                i++, j++;
-            }
-        }
-    }
-    return found;
-}
-
-// @param `v1`: submission 1
-// @param `v2`: submission 2
-// @return: number of maximal matches
-// we'll check presence of each substring of `v1` in `v2` using kmp
 int numExactMatches(const std::vector<int>& v1, const std::vector<int>& v2) {
-    // using a copy of v2 so that I can replace elements with `-1` whenever
-    // a match is found so that the match is not searched again
-    std::vector<int> v2Copy = v2;
+    if (v1.empty() || v2.empty()) return 0;
 
-    // kmpTables[j] -> kmp table of (suffix of v1 starting at j)
-    std::vector<std::vector<int>> kmpTables = allKmpTables(v1);
-    int n = v1.size(), num = 0;
+    const int n = v1.size();
+    const int m = v2.size();
+    int num = 0;
 
-    // for efficient calculation of kmp table of v1[j : j + i]
-    std::vector<std::vector<int>> lasts(kmpTables.size());
-    for (int j = 0; j < kmpTables.size(); j++) {
-        lasts[j] = calcLast(kmpTables[j]);
-    }
+    std::vector<bool> used(m, false);
 
-    // i -> length of pattern
-    // j -> start index of pattern
-    // 40 is the best value for running the code (from observation)
-    for (int i = 40; i >= 10; i--) {
-        for (int j = 0; j < n - i + 1; j++) {
-            std::vector<int> pattern(v1.begin() + j, v1.begin() + j + i);
-            // adjusting to get kmp table of v1[j : j + i]
-            int temp = kmpTables[j][i];
-            kmpTables[j][i] = lasts[j][i];
-            // finding all occurence of pattern in v2
+    // For each length from 20 down to 10
+    for (int L = 20; L >= 10; --L) {
+        if (L > n || L > m) continue;
 
-            std::vector<int> res = kmp(v2Copy, pattern, kmpTables[j]);
-            for (auto start : res) {
-                for (int index = start; index < start + i; index++) {
-                    v2Copy[index] = -1;
+        // Map to store substrings of v1
+        std::unordered_multimap<std::string, int> substr_map;
+
+        // Collect all substrings of length L from v1
+        for (int i = 0; i <= n - L; ++i) {
+            std::string key;
+            key.reserve(L * sizeof(int));
+            for (int j = 0; j < L; ++j) {
+                key.append(reinterpret_cast<const char*>(&v1[i + j]), sizeof(int));
+            }
+            substr_map.emplace(key, i);
+        }
+
+        // Search for matching substrings in v2
+        for (int i = 0; i <= m - L; ++i) {
+            // Check if positions are already used
+            bool is_used = false;
+            for (int k = i; k < i + L; ++k) {
+                if (used[k]) {
+                    is_used = true;
+                    break;
                 }
             }
+            if (is_used) continue;
 
-            // restoring the adjustment
-            kmpTables[j][i] = temp;
-            num += res.size() * i;
-#if TEST_NUM_MATCHES
-            if (!res.empty()) {
-                std::cout << i << ", " << j << " : ";
-                printContainer(res);
+            // Create key for current substring in v2
+            std::string key;
+            key.reserve(L * sizeof(int));
+            for (int j = 0; j < L; ++j) {
+                key.append(reinterpret_cast<const char*>(&v2[i + j]), sizeof(int));
             }
-#endif
+
+            auto range = substr_map.equal_range(key);
+            for (auto it = range.first; it != range.second; ++it) {
+                // Exact match found
+                // Mark positions as used
+                for (int k = i; k < i + L; ++k)
+                    used[k] = true;
+                num += L;
+                break;  // Avoid multiple counts for the same position
+            }
         }
     }
-
     return num;
 }
 
