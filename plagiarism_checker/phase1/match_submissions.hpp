@@ -204,7 +204,7 @@ bool isPlagged(const int exactMatches, const int approxMatches,
     double exactMatchRatio = (double)exactMatches / v1Size;
     double approxMatchRatio = (double)approxMatches / v1Size;
 
-    double threshold = 0.4;
+    double threshold = 0.5;
     double weightExact = 0.8;
     double weightApprox = 1 - weightExact;
     double score = weightExact * exactMatchRatio + weightApprox * approxMatchRatio;
