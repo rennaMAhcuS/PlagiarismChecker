@@ -1,6 +1,6 @@
 # INSTRUCTIONS:
 # For the first time, run
-# `docker build . -t plagiarism-checker && docker run -it -v .:/home/Loki/plagiarism_checker --name=NP-MOS --network=bridge --hostname=Midgard plagiarism-checker:latest`
+# `docker build . -t copycatchers && docker run -it -v .:/home/Loki/PlagiarismChecker --name=NP-MOS --network=bridge --hostname=Midgard copycatchers:latest`
 # To use the docker container, run
 # `docker start -ai NP-MOS`
 # NOTE: To use gdb and sanitizers properly, you should run it on native architecture.
