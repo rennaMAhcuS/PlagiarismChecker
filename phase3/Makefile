@@ -1,30 +1,23 @@
+all: main
+
 CXX = clang++
 CXXWARNINGS = -Wall -Wshadow -Wuninitialized -Wtype-limits -Wno-unused-variable
 CXXFLAGS = -std=gnu++20 -g -fsanitize=address,undefined $(CXXWARNINGS)
 INCLUDEFLAGS = -I/usr/lib/llvm-18/include
 LDFLAGS = -lclang -L/usr/lib/llvm-18/lib -rpath /usr/lib/llvm-18/lib -fuse-ld=lld
 
-# Default value for CHECKER_NUMBER
-CHECKER_NUMBER ?= 0  # To give CHECKER_NUMBER through CLI, run `make <type> CHECKER_NUMBER=<number>`
-CPPFLAGS = -DCHECKER_NUMBER=$(CHECKER_NUMBER)
+# `make check=<number> test=<folder_name>`
+test ?= one
+ifneq ($(filter-out undefined,$(origin checker)),)
+CPPFLAGS = -DCHECKER_NUMBER=$(checker)
+endif
 
 main: main.cpp tokenizer.cpp
-	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $(INCLUDEFLAGS) $(LDFLAGS) $^ -o $@
-	./main
-	rm -rf main.dSYM main
-
-test: test.cpp tokenizer.cpp
-	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $(INCLUDEFLAGS) $(LDFLAGS) $^ -o $@
-	./test
-	rm -rf test.dSYM test
-
-score: score.cpp tokenizer.cpp
-	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $(INCLUDEFLAGS) $(LDFLAGS) $^ -o $@
-	./score
-	rm -rf score.dSYM score
+	@$(CXX) $(CXXFLAGS) $(CPPFLAGS) $(INCLUDEFLAGS) $(LDFLAGS) $^ -o $@
+	@./main $(test)
+	@rm -rf main main.dSYM
 
 clean:
-	rm main test score
-	rm -rf *.dSYM
+	@rm -rf main main.dSYM > /dev/null
 
-.PHONY: main test score clean
+.PHONY: main clean

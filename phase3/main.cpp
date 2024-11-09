@@ -1,5 +1,4 @@
-#include <iomanip>
-
+#include "functionality.hpp"
 #include "tokenizer.hpp"
 
 #ifdef CHECKER_NUMBER
@@ -19,40 +18,46 @@
 #error "Invalid CHECKER_NUMBER"
 #endif
 #endif
+#ifndef CHECKER_NUMBER
+#include "checkers/match_submissions.hpp"
+#endif
 
-// You should NOT modify ANYTHING in this file.
 extern std::array<int, 5> match_submissions(std::vector<int> &submission1,
                                             std::vector<int> &submission2);
 
-void execute_and_verify_testcase(std::string test_dir) {
-    tokenizer_t file_one(test_dir + "/one.cpp");
-    tokenizer_t file_two(test_dir + "/two.cpp");
+int main(int argc, char const *argv[]) {
+    std::string test_dir = (argc == 1) ? "one" : argv[1];
+
+    tokenizer_t file_one("testcases/" + test_dir + "/one.cpp");
+    tokenizer_t file_two("testcases/" + test_dir + "/two.cpp");
     std::vector<int> submission1 = file_one.get_tokens();
     std::vector<int> submission2 = file_two.get_tokens();
+
+    auto start = std::chrono::high_resolution_clock::now();
     std::array<int, 5> output = match_submissions(submission1, submission2);
+    auto end = std::chrono::high_resolution_clock::now();
 
-    std::ifstream in(test_dir + "/expected.txt");
-    std::array<int, 5> expected;
-    in >> expected[0] >> expected[1] >> expected[2] >>
-        expected[3] >> expected[4];
-    in.close();
+    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
+    printTimeTaken(duration);
+    std::cout << BOLD << BLUE << "Results: " << RESET;
+    printContainer(output, MAGENTA, true);
 
-    for (int i = 0; i < 5; i++) {
-        std::cout << "Result " << i << ":\t";
-        std::cout << "Your output: " << std::setw(10) << std::left << output[i];
-        std::cout << "\tSample output: " << expected[i] << std::endl;
+    std::ifstream in("testcases/" + test_dir + "/expected.txt");
+    if (in.is_open()) {
+        std::array<int, 5> expected;
+        in >> expected[0] >> expected[1] >> expected[2] >> expected[3] >> expected[4];
+        in.close();
+        std::cout << BOLD << BLUE << "Expected: " << RESET;
+        printContainer(expected);
+
+        std::array<double, 5> results;
+        results[0] = (output[0] == expected[0]) ? 1.0 : 0.0;
+        results[1] = (1.0 * std::min(output[1], expected[1])) / std::max(output[1], expected[1]);
+        results[2] = (1.0 * std::min(output[2], expected[2])) / std::max(output[2], expected[2]);
+        results[3] = std::pow(1.1, -std::abs(output[3] - expected[3]));
+        results[4] = std::pow(1.1, -std::abs(output[4] - expected[4]));
+
+        double score = (2.0 * results[0] + results[1] + results[2] + 0.5 * (results[3] + results[4]));
+        std::cout << BOLD << RED << "Score: " << YELLOW << score << " / 5.0" << RESET << std::endl;
     }
-    std::cout << std::endl;
-}
-
-int main(void) {
-    std::cout << "Testcase 1: " << std::endl;
-    execute_and_verify_testcase("testcases/one");
-
-    std::cout << "Testcase 2: " << std::endl;
-    execute_and_verify_testcase("testcases/two");
-
-    std::cout << "Testcase 3: " << std::endl;
-    execute_and_verify_testcase("testcases/three");
-    return 0;
 }
