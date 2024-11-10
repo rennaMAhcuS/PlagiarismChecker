@@ -9,15 +9,15 @@
 
 class plagiarism_checker_t {
     // You should NOT modify the public interface of this class.
-public:
+   public:
     plagiarism_checker_t(void);
-    plagiarism_checker_t(std::vector<std::shared_ptr<submission_t>> 
-                            __submissions);
+    plagiarism_checker_t(std::vector<std::shared_ptr<submission_t>>
+                             __submissions);
     ~plagiarism_checker_t(void);
     void add_submission(std::shared_ptr<submission_t> __submission);
 
-protected:
+   protected:
     // TODO: Add members and function signatures here
-    
+
     // End TODO
 };
