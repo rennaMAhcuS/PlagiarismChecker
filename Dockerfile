@@ -1,6 +1,6 @@
 # INSTRUCTIONS:
 # For the first time, run
-# `docker build . -t copycatchers && docker run -it -v .:/home/Loki/PlagiarismChecker --name=NP-MOS --network=bridge --hostname=Midgard copycatchers:latest`
+# `docker build . -t copycatchers && docker run -it -v .:/home/Loki/plagiarism_checker --name=NP-MOS --network=bridge --hostname=Midgard copycatchers:latest`
 # To use the docker container, run
 # `docker start -ai NP-MOS`
 # NOTE: To use gdb and sanitizers properly, you should run it on native architecture.
@@ -19,9 +19,9 @@ RUN useradd -ms /bin/bash ${USERNAME} && \
     echo "${USERNAME}:huffman" | chpasswd && \
     usermod -aG sudo ${USERNAME}
 
-WORKDIR /home/${USERNAME}/plagiarism_checker
-
 USER ${USERNAME}
+
+WORKDIR /home/${USERNAME}/plagiarism_checker
 
 RUN echo "\
     leak:llvm\n\
@@ -36,6 +36,7 @@ RUN echo "\
     export LDFLAGS='-fuse-ld=lld'\n\
     export CSTRICT='-fsanitize=address,undefined,leak,bounds -Werror'\n\
     export CTHREAD='-fsanitize=thread,undefined,bounds -Werror'\n\
-    export LSAN_OPTIONS=suppressions=${HOME}/.lsan.supp\n" >> ~/.bashrc
+    export LSAN_OPTIONS=suppressions=${HOME}/.lsan.supp\n\n\
+    alias ..='cd ..'" >> ~/.bashrc
 
 CMD ["bash"]
