@@ -1,4 +1,4 @@
-#include "../tokenizer.hpp"
+#include "tokenizer.hpp"
 // You should NOT modify ANYTHING in this file.
 
 tokenizer_t::tokenizer_t(std::string __file_name) {
