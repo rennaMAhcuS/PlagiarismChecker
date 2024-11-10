@@ -1,9 +1,10 @@
-#include "plagiarism_checker.hpp"
-
-#include <map>
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <unistd.h>
+
+#include <map>
+
+#include "plagiarism_checker.hpp"
 
 // You should NOT modify ANYTHING in this file.
 
@@ -11,37 +12,34 @@ void student_t::flag_student(std::shared_ptr<submission_t> __submission) {
     int i = 0;
     while (__submission->codefile[i] != '/') i++;
     i++;
-    std::cout << "I was flagged in " << __submission->codefile.substr(i) << 
-        " and must defend myself in front of Prof. " <<
-        __submission->professor->get_name() << "." << std::endl;
+    std::cout << "I was flagged in " << __submission->codefile.substr(i) << " and must defend myself in front of Prof. " << __submission->professor->get_name() << "." << std::endl;
 }
 
 void professor_t::flag_professor(std::shared_ptr<submission_t> __submission) {
     int i = 0;
     while (__submission->codefile[i] != '/') i++;
     i++;
-    std::cout << "Student " << __submission->student->get_name() << 
-        " has plagiarized in " << __submission->codefile.substr(i) << 
-        " and will be receiving an FR grade." << std::endl << std::endl;
+    std::cout << "Student " << __submission->student->get_name() << " has plagiarized in " << __submission->codefile.substr(i) << " and will be receiving an FR grade." << std::endl
+              << std::endl;
 }
 
 namespace testcase {
-    std::string test_dir;
-    std::map<std::string, std::shared_ptr<student_t>> students; 
-    std::map<std::string, std::shared_ptr<professor_t>> professors; 
-    std::vector<std::shared_ptr<submission_t>> pre_existing_codes;
-    void get_students(void);
-    void get_professors(void);
-    void get_pre_existing_codes(void);
-    void execute_testcase(std::string test_dir);
-}
+std::string test_dir;
+std::map<std::string, std::shared_ptr<student_t>> students;
+std::map<std::string, std::shared_ptr<professor_t>> professors;
+std::vector<std::shared_ptr<submission_t>> pre_existing_codes;
+void get_students(void);
+void get_professors(void);
+void get_pre_existing_codes(void);
+void execute_testcase(std::string test_dir);
+}  // namespace testcase
 
 void testcase::get_students(void) {
     std::string filename = testcase::test_dir + "/students.txt";
     std::ifstream in(filename);
     std::string student_name;
     while (in >> student_name) {
-        testcase::students[student_name] = 
+        testcase::students[student_name] =
             std::make_shared<student_t>(student_name);
     }
     in.close();
@@ -52,7 +50,7 @@ void testcase::get_professors(void) {
     std::ifstream in(filename);
     std::string professor_name;
     while (in >> professor_name) {
-        testcase::professors[professor_name] = 
+        testcase::professors[professor_name] =
             std::make_shared<professor_t>(professor_name);
     }
     in.close();
@@ -66,7 +64,7 @@ void testcase::get_pre_existing_codes(void) {
     std::string token;
     std::string code_file;
     while (in >> id >> student_name >> professor_name >> code_file) {
-        std::shared_ptr<submission_t> submission = 
+        std::shared_ptr<submission_t> submission =
             std::make_shared<submission_t>();
         submission->id = id;
         submission->student = testcase::students[student_name];
@@ -76,7 +74,6 @@ void testcase::get_pre_existing_codes(void) {
     }
     in.close();
 }
-
 
 void testcase::execute_testcase(std::string __test_dir) {
     testcase::test_dir = __test_dir;
@@ -93,7 +90,7 @@ void testcase::execute_testcase(std::string __test_dir) {
     std::string code_file;
     while (in >> timestamp >> id >> student_name >> prof_name >> code_file) {
         usleep((timestamp - old_timestamp) * 1000000);
-        std::shared_ptr<submission_t> submission = 
+        std::shared_ptr<submission_t> submission =
             std::make_shared<submission_t>();
         submission->id = id;
         submission->student = testcase::students[student_name];
