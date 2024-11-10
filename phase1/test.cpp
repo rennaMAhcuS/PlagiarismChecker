@@ -1,5 +1,5 @@
-#include "../tokenizer.hpp"
 #include "match_submissions.hpp"
+#include "tokenizer.hpp"
 
 int main(void) {
     tokenizer_t file_one_1("testcases/one/one.cpp");

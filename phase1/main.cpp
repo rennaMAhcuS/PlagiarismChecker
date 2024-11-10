@@ -1,7 +1,7 @@
 #include <iomanip>
 
-#include "../tokenizer.hpp"
 #include "match_submissions.hpp"
+#include "tokenizer.hpp"
 
 // You should NOT modify ANYTHING in this file.
 extern std::array<int, 5> match_submissions(std::vector<int> &submission1,
