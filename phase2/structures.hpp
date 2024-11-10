@@ -1,4 +1,4 @@
-#include "../tokenizer.hpp"
+#include "tokenizer.hpp"
 // You should NOT modify ANYTHING in this file.
 
 class student_t;
@@ -6,20 +6,22 @@ class professor_t;
 struct submission_t;
 
 class student_t {
-public:
+   public:
     student_t(std::string __name) : name(__name) {}
     std::string get_name(void) { return name; }
     void flag_student(std::shared_ptr<submission_t> __submission);
-protected:
+
+   protected:
     std::string name;
 };
 
 class professor_t {
-public:
+   public:
     professor_t(std::string __name) : name(__name) {}
     std::string get_name(void) { return name; }
     void flag_professor(std::shared_ptr<submission_t> __submission);
-protected:
+
+   protected:
     std::string name;
 };
 
