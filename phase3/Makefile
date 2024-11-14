@@ -6,18 +6,25 @@ CXXFLAGS = -std=gnu++20 -g -fsanitize=address,undefined $(CXXWARNINGS)
 INCLUDEFLAGS = -I/usr/lib/llvm-18/include
 LDFLAGS = -lclang -L/usr/lib/llvm-18/lib -rpath /usr/lib/llvm-18/lib -fuse-ld=lld
 
-# `make check=<number> test=<folder_name>`
+# The build directory
+BUILDDIR = ~/build
+
+# The test and the checker parameters
 test ?= one
 ifneq ($(filter-out undefined,$(origin checker)),)
 CPPFLAGS = -DCHECKER_NUMBER=$(checker)
 endif
 
-main: main.cpp tokenizer.cpp
+main: $(BUILDDIR)/main
+	@$(BUILDDIR)/main 2>/dev/null
+	@rm -rf $(BUILDDIR)
+
+$(BUILDDIR)/main: main.cpp tokenizer.cpp
+	@mkdir -p $(BUILDDIR)
+	@$(CXX) $(CXXFLAGS) $(INCLUDEFLAGS) $(LDFLAGS) $^ -o $@
 	@$(CXX) $(CXXFLAGS) $(CPPFLAGS) $(INCLUDEFLAGS) $(LDFLAGS) $^ -o $@
-	@./main $(test)
-	@rm -rf main main.dSYM
 
 clean:
-	@rm -rf main main.dSYM > /dev/null
+	rm -rf $(BUILDDIR)
 
 .PHONY: main clean
