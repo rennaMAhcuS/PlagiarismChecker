@@ -26,41 +26,6 @@
  * by comparing exact and approximate matches of integer sequences.
  */
 
-// color codes for good printing
-const std::string RESET = "\033[0m";
-const std::string RED = "\033[31m";
-const std::string GREEN = "\033[32m";
-const std::string YELLOW = "\033[33m";
-const std::string BLUE = "\033[34m";
-const std::string MAGENTA = "\033[35m";
-const std::string CYAN = "\033[36m";
-const std::string BOLD = "\033[1m";
-
-template <typename T>
-void printTimeTaken(T duration) {
-    std::cout << CYAN << "Time taken in (s): " << duration << RESET << std::endl;
-}
-
-template <typename T>
-void printContainer(T& v, const std::string& color = GREEN, std::string sep = " ") {
-    for (auto& i : v) {
-        std::cout << color << i << RESET << sep;
-    }
-    std::cout << "\n";
-}
-
-template <typename T>
-void printContainerToFile(T& v, std::string filename) {
-    std::ofstream fileStream(filename);
-    if (!fileStream) {
-        std::cerr << "Unable to open file " << filename << std::endl;
-    }
-    for (auto& i : v) {
-        fileStream << i << "\n";
-    }
-    fileStream << "\n";
-    fileStream.close();
-}
 /**
  * @brief Get the hash of a given substring from a vector
  * @param v vector of integers
