@@ -1,11 +1,6 @@
-# INSTRUCTIONS:
-# For the first time, run
-# `docker build . -t copycatchers && docker run -it -v .:/home/Loki/plagiarism_checker --name=NP-MOS --network=bridge --hostname=Midgard copycatchers:latest`
-# To use the docker container, run
-# `docker start -ai NP-MOS`
-# NOTE: To use gdb and sanitizers properly, you should run it on native architecture.
+# NOTE: To use gdb and sanitizers properly, you should run the executables on native architecture.
 
-FROM ubuntu:24.04
+FROM ubuntu
 
 ENV USERNAME=Loki
 ENV TERM=xterm-256color

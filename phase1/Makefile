@@ -1,26 +1,42 @@
+all: main test score
+
 CXX = clang++
 CXXWARNINGS = -Wall -Wshadow -Wuninitialized -Wtype-limits -Wno-unused-variable
 CXXFLAGS = -std=gnu++20 -g -fsanitize=address,undefined $(CXXWARNINGS)
 INCLUDEFLAGS = -I/usr/lib/llvm-18/include
 LDFLAGS = -lclang -L/usr/lib/llvm-18/lib -rpath /usr/lib/llvm-18/lib -fuse-ld=lld
 
-main: main.cpp tokenizer.cpp
-	$(CXX) $(CXXFLAGS) $(INCLUDEFLAGS) $(LDFLAGS) $^ -o $@
-	./main
-	rm -rf main.dSYM main
+# The build directory
+BUILDDIR = ~/build
 
-test: test.cpp tokenizer.cpp
-	$(CXX) $(CXXFLAGS) $(INCLUDEFLAGS) $(LDFLAGS) $^ -o $@
-	./test
-	rm -rf test.dSYM test
+main: $(BUILDDIR)/main
+	@echo main
+	@$(BUILDDIR)/main 2> /dev/null
+	@rm -rf $(BUILDDIR)/main
 
-score: score.cpp tokenizer.cpp
-	$(CXX) $(CXXFLAGS) $(INCLUDEFLAGS) $(LDFLAGS) $^ -o $@
-	./score
-	rm -rf score.dSYM score
+$(BUILDDIR)/main: main.cpp tokenizer.cpp
+	@mkdir -p $(BUILDDIR)
+	@$(CXX) $(CXXFLAGS) $(INCLUDEFLAGS) $(LDFLAGS) $^ -o $@
+
+test: $(BUILDDIR)/test
+	@echo test
+	@$(BUILDDIR)/test 2> /dev/null
+	@rm -rf $(BUILDDIR)/test
+
+$(BUILDDIR)/test: test.cpp tokenizer.cpp
+	@mkdir -p $(BUILDDIR)
+	@$(CXX) $(CXXFLAGS) $(INCLUDEFLAGS) $(LDFLAGS) $^ -o $@
+
+score: $(BUILDDIR)/score
+	@echo score
+	@$(BUILDDIR)/score 2> /dev/null
+	@rm -rf $(BUILDDIR)/score
+
+$(BUILDDIR)/score: score.cpp tokenizer.cpp
+	@mkdir -p $(BUILDDIR)
+	@$(CXX) $(CXXFLAGS) $(INCLUDEFLAGS) $(LDFLAGS) $^ -o $@
 
 clean:
-	rm main test
-	rm -rf *.dSYM
+	rm -rf $(BUILDDIR)
 
 .PHONY: main test score clean
