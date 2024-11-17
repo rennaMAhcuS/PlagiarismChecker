@@ -1,16 +1,24 @@
+all: main
+
 CXX = clang++
 CXXWARNINGS = -Wall -Wshadow -Wuninitialized -Wtype-limits -Wno-unused-variable
 CXXFLAGS = -std=gnu++20 -g -fsanitize=address,undefined $(CXXWARNINGS)
 INCLUDEFLAGS = -I/usr/lib/llvm-18/include
 LDFLAGS = -lclang -L/usr/lib/llvm-18/lib -rpath /usr/lib/llvm-18/lib -fuse-ld=lld
 
-main: main.cpp plagiarism_checker.cpp tokenizer.cpp
-	$(CXX) $(CXXFLAGS) $(INCLUDEFLAGS) $(LDFLAGS) $^ -o $@
-	rm -rf *.dSYM
-	./main hogwarts > output.txt
-	diff -Bw hogwarts/expected.txt output.txt
+# The build directory
+BUILDDIR = ~/build
+
+main: $(BUILDDIR)/main
+	@$(BUILDDIR)/main hogwarts > $(BUILDDIR)/output.txt
+	diff -Bw hogwarts/expected.txt $(BUILDDIR)/output.txt
+	@rm $(BUILDDIR)
+
+$(BUILDDIR)/main: main.cpp plagiarism_checker.cpp tokenizer.cpp
+	@mkdir -p $(BUILDDIR)
+	@$(CXX) $(CXXFLAGS) $(INCLUDEFLAGS) $(LDFLAGS) $^ -o $@
 
 clean:
-	rm -rf main output.txt *.dSYM
+	rm -rf $(BUILDDIR)
 
 .PHONY: main clean
