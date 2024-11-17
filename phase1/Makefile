@@ -11,8 +11,8 @@ BUILDDIR = ~/build
 
 main: $(BUILDDIR)/main
 	@echo main
-	@$(BUILDDIR)/main 2>/dev/null
-	@rm -rf $(BUILDDIR)
+	@$(BUILDDIR)/main 2> /dev/null
+	@rm -rf $(BUILDDIR)/main
 
 $(BUILDDIR)/main: main.cpp tokenizer.cpp
 	@mkdir -p $(BUILDDIR)
@@ -20,8 +20,8 @@ $(BUILDDIR)/main: main.cpp tokenizer.cpp
 
 test: $(BUILDDIR)/test
 	@echo test
-	@$(BUILDDIR)/test 2>/dev/null
-	@rm -rf $(BUILDDIR)
+	@$(BUILDDIR)/test 2> /dev/null
+	@rm -rf $(BUILDDIR)/test
 
 $(BUILDDIR)/test: test.cpp tokenizer.cpp
 	@mkdir -p $(BUILDDIR)
@@ -29,8 +29,8 @@ $(BUILDDIR)/test: test.cpp tokenizer.cpp
 
 score: $(BUILDDIR)/score
 	@echo score
-	@$(BUILDDIR)/score 2>/dev/null
-	@rm -rf $(BUILDDIR)
+	@$(BUILDDIR)/score 2> /dev/null
+	@rm -rf $(BUILDDIR)/score
 
 $(BUILDDIR)/score: score.cpp tokenizer.cpp
 	@mkdir -p $(BUILDDIR)

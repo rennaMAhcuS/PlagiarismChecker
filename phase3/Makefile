@@ -16,12 +16,11 @@ CPPFLAGS = -DCHECKER_NUMBER=$(checker)
 endif
 
 main: $(BUILDDIR)/main
-	@$(BUILDDIR)/main 2>/dev/null
-	@rm -rf $(BUILDDIR)
+	@$(BUILDDIR)/main 2> /dev/null
+	@rm -rf $(BUILDDIR)/main
 
 $(BUILDDIR)/main: main.cpp tokenizer.cpp
 	@mkdir -p $(BUILDDIR)
-	@$(CXX) $(CXXFLAGS) $(INCLUDEFLAGS) $(LDFLAGS) $^ -o $@
 	@$(CXX) $(CXXFLAGS) $(CPPFLAGS) $(INCLUDEFLAGS) $(LDFLAGS) $^ -o $@
 
 clean:
