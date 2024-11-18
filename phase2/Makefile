@@ -10,9 +10,13 @@ LDFLAGS = -lclang -L/usr/lib/llvm-18/lib -rpath /usr/lib/llvm-18/lib -fuse-ld=ll
 BUILDDIR = ~/build
 
 main: $(BUILDDIR)/main
+	@echo hogwarts
 	@$(BUILDDIR)/main hogwarts > $(BUILDDIR)/output.txt
 	diff -Bw hogwarts/expected.txt $(BUILDDIR)/output.txt
-	@rm $(BUILDDIR)
+	@echo ainur
+	@$(BUILDDIR)/main ainur > $(BUILDDIR)/output.txt
+	diff -Bw ainur/expected.txt $(BUILDDIR)/output.txt
+	@rm -rf $(BUILDDIR)
 
 $(BUILDDIR)/main: main.cpp plagiarism_checker.cpp tokenizer.cpp
 	@mkdir -p $(BUILDDIR)
@@ -22,3 +26,4 @@ clean:
 	rm -rf $(BUILDDIR)
 
 .PHONY: main clean
+
