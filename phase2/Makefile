@@ -10,16 +10,15 @@ LDFLAGS = -lclang -L/usr/lib/llvm-18/lib -rpath /usr/lib/llvm-18/lib -fuse-ld=ll
 BUILDDIR = ~/build
 
 hogwarts: $(BUILDDIR)/main
-	@echo Testcase: hogwarts
-	@$(BUILDDIR)/main hogwarts > $(BUILDDIR)/output.txt
+	@$(BUILDDIR)/main hogwarts 1> $(BUILDDIR)/output.txt
 	diff -Bw hogwarts/expected.txt $(BUILDDIR)/output.txt
-	@rm  $(BUILDDIR)/main $(BUILDDIR)/output.txt
+	@rm $(BUILDDIR)/output.txt
 
 ainur: $(BUILDDIR)/main
-	@echo Testcase: ainur
-	@$(BUILDDIR)/main ainur > $(BUILDDIR)/output.txt
+	@echo "\033[1;34mTestcase: ainur\033[0m"
+	@$(BUILDDIR)/main ainur 1> $(BUILDDIR)/output.txt 2> /dev/null
 	diff -Bw ainur/expected.txt $(BUILDDIR)/output.txt
-	@rm -rf $(BUILDDIR)/main $(BUILDDIR)/output.txt
+	@rm $(BUILDDIR)/output.txt
 
 $(BUILDDIR)/main: main.cpp plagiarism_checker.cpp tokenizer.cpp
 	@mkdir -p $(BUILDDIR)

@@ -23,9 +23,8 @@ plagiarism_checker_t::~plagiarism_checker_t() {
 
 // updates the flags if plag has taken place
 // returns the number of matches between two submissions
-std::pair<int, int> plagiarism_checker_t::check_two_submissions(std::pair<int, std::shared_ptr<submission_t>> curr, 
-    std::pair<int, std::shared_ptr<submission_t>> prev) {
-
+std::pair<int, int> plagiarism_checker_t::check_two_submissions(std::pair<int, std::shared_ptr<submission_t>> curr,
+                                                                std::pair<int, std::shared_ptr<submission_t>> prev) {
     std::vector<int> curr_tokens = tokenizer_t(curr.second->codefile).get_tokens();
     std::vector<int> prev_tokens = tokenizer_t(prev.second->codefile).get_tokens();
 
@@ -41,7 +40,7 @@ std::pair<int, int> plagiarism_checker_t::check_two_submissions(std::pair<int, s
         for (int j = 1; j <= prev_size; ++j) {
             if (curr_tokens[i - 1] == prev_tokens[j - 1]) {
                 dp[i][j] = dp[i - 1][j - 1] + 1;
-                if (dp[i][j] >= 15 && dp[i-1][j-1] < 15) num_matches++;
+                if (dp[i][j] >= 15 && dp[i - 1][j - 1] < 15) num_matches++;
                 max_match_length = std::max(max_match_length, dp[i][j]);
             }
         }
@@ -52,15 +51,14 @@ std::pair<int, int> plagiarism_checker_t::check_two_submissions(std::pair<int, s
 }
 
 void plagiarism_checker_t::process_submission(std::shared_ptr<submission_t> __submission, int curr_time, int num_to_check) {
-    
     int matches_last_second = 0;
-    for(int i = 0; i < num_to_check; i++) {
+    for (int i = 0; i < num_to_check; i++) {
         // compare two submissions
         std::pair<int, int> vals = check_two_submissions(
             {0, __submission}, {std::get<0>(to_check[i]), std::get<1>(to_check[i])});
 
         // update `matches_last_second`
-        if (std::get<0>(to_check[i]) > 0 && std::get<0>(to_check[i]) >= curr_time - 1000) 
+        if (std::get<0>(to_check[i]) > 0 && std::get<0>(to_check[i]) >= curr_time - 1000)
             matches_last_second += vals.first;
 
         // flagging
@@ -68,18 +66,18 @@ void plagiarism_checker_t::process_submission(std::shared_ptr<submission_t> __su
         mtx.lock();
         if (vals.first >= 10 || vals.second >= 75) {
             // flagging previous submission
-            if (!std::get<2>(to_check[i]) && 
-                std::get<0>(to_check[i]) != 0 && 
+            if (!std::get<2>(to_check[i]) &&
+                std::get<0>(to_check[i]) != 0 &&
                 std::get<0>(to_check[i]) >= curr_time - 1000) {
                 std::get<2>(to_check[i]) = true;
-                std::cerr << "prev flagged" << std::endl;
+                std::clog << "prev flagged" << std::endl;
                 std::get<1>(to_check[i])->student->flag_student(std::get<1>(to_check[i]));
                 std::get<1>(to_check[i])->professor->flag_professor(std::get<1>(to_check[i]));
             }
             // flagging current submission
             if (!std::get<2>(to_check[num_to_check])) {
                 std::get<2>(to_check[num_to_check]) = true;
-                std::cerr << "curr flagged" << std::endl;
+                std::clog << "curr flagged" << std::endl;
                 __submission->student->flag_student(__submission);
                 __submission->professor->flag_professor(__submission);
             }
@@ -90,7 +88,7 @@ void plagiarism_checker_t::process_submission(std::shared_ptr<submission_t> __su
     std::mutex mtx;
     mtx.lock();
     if (!std::get<2>(to_check[num_to_check]) && matches_last_second >= 20) {
-        std::cerr << "flagged for patchwork" << std::endl;
+        std::clog << "flagged for patchwork" << std::endl;
         std::get<2>(to_check[num_to_check]) = true;
         __submission->student->flag_student(__submission);
         __submission->professor->flag_professor(__submission);
@@ -105,8 +103,8 @@ void plagiarism_checker_t::push_submission(std::shared_ptr<submission_t> __submi
     mtx.lock();
     to_check.push_back({curr_time, __submission, false});
     mtx.unlock();
-    std::cerr << "Time: " << curr_time << std::endl;
-    std::cerr << "Number of prev files to check: " << num_to_check << std::endl;
+    std::clog << "Time: " << curr_time << std::endl;
+    std::clog << "Number of prev files to check: " << num_to_check << std::endl;
 
     std::thread process_thread(&plagiarism_checker_t::process_submission, this, __submission, curr_time, num_to_check);
     process_thread.join();
