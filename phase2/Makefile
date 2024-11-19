@@ -13,13 +13,13 @@ hogwarts: $(BUILDDIR)/main
 	@echo Testcase: hogwarts
 	@$(BUILDDIR)/main hogwarts > $(BUILDDIR)/output.txt
 	diff -Bw hogwarts/expected.txt $(BUILDDIR)/output.txt
-	@rm -rf $(BUILDDIR)
+	@rm  $(BUILDDIR)/main $(BUILDDIR)/output.txt
 
 ainur: $(BUILDDIR)/main
 	@echo Testcase: ainur
 	@$(BUILDDIR)/main ainur > $(BUILDDIR)/output.txt
 	diff -Bw ainur/expected.txt $(BUILDDIR)/output.txt
-	@rm -rf $(BUILDDIR)
+	@rm -rf $(BUILDDIR)/main $(BUILDDIR)/output.txt
 
 $(BUILDDIR)/main: main.cpp plagiarism_checker.cpp tokenizer.cpp
 	@mkdir -p $(BUILDDIR)
@@ -28,5 +28,5 @@ $(BUILDDIR)/main: main.cpp plagiarism_checker.cpp tokenizer.cpp
 clean:
 	rm -rf $(BUILDDIR)
 
-.PHONY: main clean
+.PHONY: all hogwarts ainur $(BUILDDIR)/main clean
 

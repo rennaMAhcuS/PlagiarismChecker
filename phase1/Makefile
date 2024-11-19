@@ -39,4 +39,4 @@ $(BUILDDIR)/score: score.cpp tokenizer.cpp
 clean:
 	rm -rf $(BUILDDIR)
 
-.PHONY: main test score clean
+.PHONY: all main $(BUILDDIR)/main test $(BUILDDIR)/test score $(BUILDDIR)/score clean

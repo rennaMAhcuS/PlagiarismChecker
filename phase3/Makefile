@@ -26,4 +26,4 @@ $(BUILDDIR)/main: main.cpp tokenizer.cpp
 clean:
 	rm -rf $(BUILDDIR)
 
-.PHONY: main clean
+.PHONY: all main $(BUILDDIR)/main clean
