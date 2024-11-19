@@ -1,4 +1,4 @@
-all: main
+all: hogwarts ainur
 
 CXX = clang++
 CXXWARNINGS = -Wall -Wshadow -Wuninitialized -Wtype-limits -Wno-unused-variable
@@ -9,11 +9,14 @@ LDFLAGS = -lclang -L/usr/lib/llvm-18/lib -rpath /usr/lib/llvm-18/lib -fuse-ld=ll
 # The build directory
 BUILDDIR = ~/build
 
-main: $(BUILDDIR)/main
-	@echo hogwarts
+hogwarts: $(BUILDDIR)/main
+	@echo Testcase: hogwarts
 	@$(BUILDDIR)/main hogwarts > $(BUILDDIR)/output.txt
 	diff -Bw hogwarts/expected.txt $(BUILDDIR)/output.txt
-	@echo ainur
+	@rm -rf $(BUILDDIR)
+
+ainur: $(BUILDDIR)/main
+	@echo Testcase: ainur
 	@$(BUILDDIR)/main ainur > $(BUILDDIR)/output.txt
 	diff -Bw ainur/expected.txt $(BUILDDIR)/output.txt
 	@rm -rf $(BUILDDIR)

@@ -3,6 +3,9 @@
 #include <queue>
 #include <chrono>
 #include <iostream>
+#include <thread>
+#include <mutex>
+
 // You are free to add any STL includes above this comment, below the --line--.
 // DO NOT add "using namespace std;" or include any other files/libraries.
 // Also DO NOT add the include "bits/stdc++.h"
@@ -21,8 +24,11 @@ class plagiarism_checker_t {
    protected:
     // TODO: Add members and function signatures here
     std::vector<std::tuple<int, std::shared_ptr<submission_t>, bool>> to_check;
+    std::vector<std::thread> threads_list;
 
     int curr_time_millis();
+    void push_submission(std::shared_ptr<submission_t>);
+    void process_submission(std::shared_ptr<submission_t>, int, int);
     std::pair<int, int> check_two_submissions(std::pair<int, std::shared_ptr<submission_t>>, std::pair<int, std::shared_ptr<submission_t>>);
 
     // End TODO

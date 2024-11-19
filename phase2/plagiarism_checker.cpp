@@ -15,7 +15,10 @@ plagiarism_checker_t::plagiarism_checker_t(std::vector<std::shared_ptr<submissio
 }
 
 plagiarism_checker_t::~plagiarism_checker_t() {
-    // do nothing???
+    // join all the threads
+    for (auto& i : threads_list) {
+        i.join();
+    }
 }
 
 // updates the flags if plag has taken place
@@ -48,32 +51,24 @@ std::pair<int, int> plagiarism_checker_t::check_two_submissions(std::pair<int, s
     return {num_matches, max_match_length};
 }
 
-void plagiarism_checker_t::add_submission(std::shared_ptr<submission_t> __submission) {
-    int curr_time = plagiarism_checker_t::curr_time_millis();
-    int num_to_check = to_check.size();
-    to_check.push_back({curr_time, __submission, false});
-    std::cerr << "Time: " << curr_time << std::endl;
-    std::cerr << "Number of prev files to check: " << num_to_check << std::endl;
-
+void plagiarism_checker_t::process_submission(std::shared_ptr<submission_t> __submission, int curr_time, int num_to_check) {
+    
     int matches_last_second = 0;
     for(int i = 0; i < num_to_check; i++) {
-        std::pair<int, int> vals = plagiarism_checker_t::check_two_submissions(
+        // compare two submissions
+        std::pair<int, int> vals = check_two_submissions(
             {0, __submission}, {std::get<0>(to_check[i]), std::get<1>(to_check[i])});
+
         // update `matches_last_second`
         if (std::get<0>(to_check[i]) > 0 && std::get<0>(to_check[i]) >= curr_time - 1000) 
             matches_last_second += vals.first;
 
         // flagging
+        std::mutex mtx;
+        mtx.lock();
         if (vals.first >= 10 || vals.second >= 75) {
-            // flagging current submission
-            if (! std::get<2>(to_check[num_to_check])) {
-                std::get<2>(to_check[num_to_check]) = true;
-                std::cerr << "curr flagged" << std::endl;
-                __submission->student->flag_student(__submission);
-                __submission->professor->flag_professor(__submission);
-            }
             // flagging previous submission
-            if (!std::get<1>(to_check[i]) && 
+            if (!std::get<2>(to_check[i]) && 
                 std::get<0>(to_check[i]) != 0 && 
                 std::get<0>(to_check[i]) >= curr_time - 1000) {
                 std::get<2>(to_check[i]) = true;
@@ -81,16 +76,46 @@ void plagiarism_checker_t::add_submission(std::shared_ptr<submission_t> __submis
                 std::get<1>(to_check[i])->student->flag_student(std::get<1>(to_check[i]));
                 std::get<1>(to_check[i])->professor->flag_professor(std::get<1>(to_check[i]));
             }
+            // flagging current submission
+            if (!std::get<2>(to_check[num_to_check])) {
+                std::get<2>(to_check[num_to_check]) = true;
+                std::cerr << "curr flagged" << std::endl;
+                __submission->student->flag_student(__submission);
+                __submission->professor->flag_professor(__submission);
+            }
         }
-        
+        mtx.unlock();
     }
-
     // flagging for patchwork plagiarism
+    std::mutex mtx;
+    mtx.lock();
     if (!std::get<2>(to_check[num_to_check]) && matches_last_second >= 20) {
+        std::cerr << "flagged for patchwork" << std::endl;
         std::get<2>(to_check[num_to_check]) = true;
         __submission->student->flag_student(__submission);
         __submission->professor->flag_professor(__submission);
     }
+    mtx.unlock();
+}
+
+void plagiarism_checker_t::push_submission(std::shared_ptr<submission_t> __submission) {
+    int curr_time = curr_time_millis();
+    int num_to_check = to_check.size();
+    std::mutex mtx;
+    mtx.lock();
+    to_check.push_back({curr_time, __submission, false});
+    mtx.unlock();
+    std::cerr << "Time: " << curr_time << std::endl;
+    std::cerr << "Number of prev files to check: " << num_to_check << std::endl;
+
+    std::thread process_thread(&plagiarism_checker_t::process_submission, this, __submission, curr_time, num_to_check);
+    process_thread.join();
+}
+
+void plagiarism_checker_t::add_submission(std::shared_ptr<submission_t> __submission) {
+    // std::thread submission_thread(&plagiarism_checker_t::push_submission, this, __submission);
+    // submission_thread.join();
+    threads_list.emplace_back(&plagiarism_checker_t::push_submission, this, __submission);
 }
 
 int plagiarism_checker_t::curr_time_millis() {
