@@ -29,4 +29,3 @@ clean:
 	rm -rf $(BUILDDIR)
 
 .PHONY: all hogwarts ainur $(BUILDDIR)/main clean
-

@@ -61,6 +61,7 @@ void printContainerToFile(T& v, std::string filename) {
     fileStream << "\n";
     fileStream.close();
 }
+
 /**
  * @brief Get the hash of a given substring from a vector
  * @param v vector of integers
@@ -75,6 +76,7 @@ std::string getHash(const std::vector<int>& v, int i, int L) {
     }
     return key;
 }
+
 /**
  * @brief Calculates the all hashes of substrings of a given length from a
  * vector and also maps these hashes to their corresponding substring's
@@ -95,6 +97,7 @@ SubstrMap allSubstrHashes(const std::vector<int>& v, int L) {
 
     return substr_map;
 }
+
 /**
  * @brief Checks if a substring of a vector has already been checked
  * @param visited vector of booleans to keep track of checked positions
@@ -109,6 +112,7 @@ bool isAlreadyChecked(const std::vector<bool>& visited, int i, int L) {
     }
     return false;
 }
+
 /**
  * @brief Calculates the number of exact matches between two vectors
  * @param v1 first vector of integers
@@ -146,6 +150,7 @@ int numExactMatches(const std::vector<int>& v1, const std::vector<int>& v2) {
     }
     return num;
 }
+
 /**
  * @brief Calculates the longest approximate match between two vectors
  * A longest approximate match is the longest sequence of elements from both
