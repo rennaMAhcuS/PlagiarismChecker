@@ -10,6 +10,7 @@ LDFLAGS = -lclang -L/usr/lib/llvm-18/lib -rpath /usr/lib/llvm-18/lib -fuse-ld=ll
 BUILDDIR = ~/build
 
 hogwarts: $(BUILDDIR)/main
+	@echo "\033[1;34mTestcase: hogwarts\033[0m"
 	@$(BUILDDIR)/main hogwarts 1> $(BUILDDIR)/output.txt
 	diff -Bw hogwarts/expected.txt $(BUILDDIR)/output.txt
 	@rm $(BUILDDIR)/output.txt
