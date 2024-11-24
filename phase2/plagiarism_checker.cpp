@@ -42,15 +42,35 @@ void plagiarism_checker_t::check_two_submissions(std::pair<int, std::shared_ptr<
     int prev_size = prev_tokens.size();
     std::vector<std::vector<int>> dp(curr_size + 1, std::vector<int>(prev_size + 1, 0));
 
+    // uses O(min(n, m)) space
+    std::vector<int> prev_row(prev_size + 1, 0), curr_row(prev_size + 1, 0);
     for (int i = 1; i <= curr_size; ++i) {
         for (int j = 1; j <= prev_size; ++j) {
             if (curr_tokens[i - 1] == prev_tokens[j - 1]) {
-                dp[i][j] = dp[i - 1][j - 1] + 1;
-                if (dp[i][j] == 15) num_matches++;
-                max_match_length = std::max(max_match_length, dp[i][j]);
+                curr_row[j] = prev_row[j - 1] + 1;
+                if (curr_row[j] == 15) num_matches++;
+                max_match_length = std::max(max_match_length, curr_row[j]);
+            } else {
+                curr_row[j] = 0;
             }
         }
+        std::swap(curr_row, prev_row);
     }
+
+    // Takes O(n*m) space
+    // for (int i = 1; i <= curr_size; ++i) {
+    //     for (int j = 1; j <= prev_size; ++j) {
+    //         if (curr_tokens[i - 1] == prev_tokens[j - 1]) {
+    //             curr_row[j] = prev_row[j - 1] + 1;
+    //             if (curr_row[j] == 15) num_matches++;
+    //             max_match_length = std::max(max_match_length, curr_row[j]);
+    //         } else {
+    //             curr_row[j] = 0;
+    //         }
+    //     }
+    //     std::swap(curr_row, prev_row);
+    // }
+
     // end TODO
 
     // flagging
@@ -95,18 +115,24 @@ void plagiarism_checker_t::process_submissions() {
         int num_to_check = std::get<2>(submission);
 
         int matches_last_second = 0;
-        for (int i = num_to_check - 1; i >= 0; i--) {
-            std::pair<int, std::shared_ptr<submission_t>> curr = {curr_time, __submission};
-            std::pair<int, std::shared_ptr<submission_t>> prev = {std::get<0>(to_check[i]), std::get<1>(to_check[i])};
 
-            if (prev.first <= std::max(curr.first - 1000, 0) &&
-                std::get<2>(to_check[num_to_check])) break;
+        // Lock for accessing to_check
+        {
+            std::lock_guard<std::mutex> lock(queue_mutex);
+            for (int i = num_to_check - 1; i >= 0; i--) {
+                std::pair<int, std::shared_ptr<submission_t>> curr = {curr_time, __submission};
+                std::pair<int, std::shared_ptr<submission_t>> prev = {std::get<0>(to_check[i]), std::get<1>(to_check[i])};
 
-            check_two_submissions(curr, prev, i, num_to_check, matches_last_second);
+                if (prev.first <= std::max(curr.first - 1000, 0) &&
+                    std::get<2>(to_check[num_to_check])) break;
+
+                check_two_submissions(curr, prev, i, num_to_check, matches_last_second);
+            }
         }
 
         // Flagging for patchwork plagiarism
         if (!std::get<2>(to_check[num_to_check]) && matches_last_second >= 20) {
+            std::lock_guard<std::mutex> lock(queue_mutex);
             std::get<2>(to_check[num_to_check]) = true;
             __submission->student->flag_student(__submission);
             __submission->professor->flag_professor(__submission);
@@ -116,9 +142,10 @@ void plagiarism_checker_t::process_submissions() {
 
 void plagiarism_checker_t::add_submission(std::shared_ptr<submission_t> __submission) {
     int curr_time = curr_time_millis();
-    int num_to_check = to_check.size();
+    int num_to_check;
     {
         std::lock_guard<std::mutex> lock(queue_mutex);
+        num_to_check = to_check.size();
         to_check.push_back({curr_time, __submission, false});
         pipe.push({curr_time, __submission, num_to_check});
     }
