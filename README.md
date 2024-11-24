@@ -18,3 +18,9 @@ To use the docker container, run
 ```sh
 docker start --attach --interactive NP-MOS
 ```
+
+for a shorter command, use:
+
+```sh
+docker start -ai NP-MOS
+```
