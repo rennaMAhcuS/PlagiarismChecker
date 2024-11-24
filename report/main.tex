@@ -1,23 +1,108 @@
-\documentclass{article}
+\documentclass[12pt]{article}
+\usepackage{geometry}
+\usepackage{hyperref}
+\usepackage{enumitem}
 
-\title{Simple LaTeX Document}
-\author{Author Name}
-\date{\today}
+\geometry{a4paper, margin=1in}
+
+\title{Plagiarism Checker Design Document}
+\author{Mohana Evuri, Shaik Awez Mehtab, Abhineet Majety}
+\date{Fall 2024}
 
 \begin{document}
 
 \maketitle
 
-This is a simple LaTeX document.
-\end{abstract}
-
 \section{Introduction}
-This is the introduction section.
+Concise explanation of the plagiarism checker project, objectives, and scope.
 
-\section{Main Content}
-This is the main content section.
+\section{Phase 1}
+
+\subsection{Net Length Calculation}
+\begin{itemize}[noitemsep]
+    \item \textbf{Algorithm:} Describe the algorithm used to calculate net length of accurate matches.
+    \item \textbf{Function Signatures:} 
+    \begin{itemize}
+        \item \texttt{int calculateNetLength(matches)}
+    \end{itemize}
+\end{itemize}
+
+\subsection{Longest Approximate Match}
+\begin{itemize}[noitemsep]
+    \item \textbf{Algorithm:} Explain the algorithm for finding the longest approximate match and its start indices.
+    \item \textbf{Function Signatures:}
+    \begin{itemize}
+        \item \texttt{Match findLongestApproxMatch(submission, reference)}
+    \end{itemize}
+\end{itemize}
+
+\subsection{Helpers and Data Structures}
+\begin{itemize}[noitemsep]
+    \item \textbf{Helpers:} List helper functions used.
+    \item \textbf{Data Structures:} Describe key data structures.
+    \item \textbf{Flow:} Overview from \texttt{match\_submission} call to return.
+\end{itemize}
+
+\subsection{Complexity Analysis}
+\begin{itemize}[noitemsep]
+    \item \textbf{Time Complexity:} Brief explanation.
+    \item \textbf{Space Complexity:} Brief explanation.
+\end{itemize}
+
+\section{Phase 2}
+
+\subsection{Long Pattern Match Detection}
+\begin{itemize}[noitemsep]
+    \item \textbf{Algorithm:} Describe detection of long pattern matches against any file.
+    \item \textbf{Function Signatures:}
+    \begin{itemize}
+        \item \texttt{bool detectLongPattern(submission, file)}
+    \end{itemize}
+\end{itemize}
+
+\subsection{Patchwork Plagiarism Detection}
+\begin{itemize}[noitemsep]
+    \item \textbf{Algorithm:} Explain detection of patchwork plagiarism.
+    \item \textbf{Function Signatures:}
+    \begin{itemize}
+        \item \texttt{bool detectPatchwork(submission, file)}
+    \end{itemize}
+\end{itemize}
+
+\subsection{Short Pattern Match Detection}
+\begin{itemize}[noitemsep]
+    \item \textbf{Algorithm:} Describe detection of short pattern matches for flagging.
+    \item \textbf{Function Signatures:}
+    \begin{itemize}
+        \item \texttt{bool detectShortPattern(submission, file)}
+    \end{itemize}
+\end{itemize}
+
+\subsection{Complexity Analysis}
+\begin{itemize}[noitemsep]
+    \item \textbf{Time Complexity:} Analysis in terms of number of files (m) and tokens per file (n).
+    \item \textbf{Space Complexity:} Analysis in terms of m and n.
+\end{itemize}
+
+\subsection{Concurrency Features}
+\begin{itemize}[noitemsep]
+    \item \textbf{Threading:} Usage of threading to make \texttt{add\_submission} non-blocking.
+    \item \textbf{Concurrency:} How concurrency is managed in the main thread.
+\end{itemize}
+
+\subsection{File Identification}
+\begin{itemize}[noitemsep]
+    \item \textbf{Mechanism:} How the set of files to check against is identified within one second after submission timestamp.
+\end{itemize}
+
+\subsection{Helpers and Data Structures}
+\begin{itemize}[noitemsep]
+    \item \textbf{Helpers:} List helper functions used in Phase 2.
+    \item \textbf{Data Structures:} Describe key data structures used.
+    \item \textbf{Flow:} Overview from constructor to destructor of \texttt{plagiarism\_checker\_t}.
+\end{itemize}
 
 \section{Conclusion}
-This is the conclusion section.
+Summary of the design and its effectiveness in detecting plagiarism.
 
 \end{document}
