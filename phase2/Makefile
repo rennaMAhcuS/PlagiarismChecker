@@ -12,25 +12,25 @@ BUILDDIR = ~/build
 
 hogwarts: $(BUILDDIR)/main
 	@echo "\033[1;34mTestcase: hogwarts\033[0m"
-	@$(BUILDDIR)/main hogwarts 1> $(BUILDDIR)/output.txt
+	@$(BUILDDIR)/main hogwarts 1> $(BUILDDIR)/output.txt 2> /dev/null
 	diff -Bw hogwarts/expected.txt $(BUILDDIR)/output.txt
 	@rm $(BUILDDIR)/output.txt
 
 hogwarts-thread: $(BUILDDIR)/main-thread
 	@echo "\033[1;34mTestcase: hogwarts-thread\033[0m"
-	@$(BUILDDIR)/main-thread hogwarts 1> $(BUILDDIR)/output.txt
+	@$(BUILDDIR)/main-thread hogwarts 1> $(BUILDDIR)/output.txt 2> /dev/null
 	diff -Bw hogwarts/expected.txt $(BUILDDIR)/output.txt
 	@rm $(BUILDDIR)/output.txt
 
 ainur: $(BUILDDIR)/main
 	@echo "\033[1;34mTestcase: ainur\033[0m"
-	@$(BUILDDIR)/main ainur 1> $(BUILDDIR)/output.txt 2> /dev/null
+	@$(BUILDDIR)/main ainur 1> $(BUILDDIR)/output.txt 2> /dev/null 2> /dev/null
 	diff -Bw ainur/expected.txt $(BUILDDIR)/output.txt
 	@rm $(BUILDDIR)/output.txt
 
 ainur-thread: $(BUILDDIR)/main-thread
 	@echo "\033[1;34mTestcase: ainur-thread\033[0m"
-	@$(BUILDDIR)/main-thread ainur 1> $(BUILDDIR)/output.txt
+	@$(BUILDDIR)/main-thread ainur 1> $(BUILDDIR)/output.txt 2> /dev/null
 	diff -Bw ainur/expected.txt $(BUILDDIR)/output.txt
 	@rm $(BUILDDIR)/output.txt
 
