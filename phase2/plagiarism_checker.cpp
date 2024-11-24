@@ -6,7 +6,6 @@
 
 plagiarism_checker_t::plagiarism_checker_t() {
     processor = std::thread(&plagiarism_checker_t::process_submissions, this);
-    stop = false;
 }
 
 plagiarism_checker_t::plagiarism_checker_t(std::vector<std::shared_ptr<submission_t>> __submissions) {
@@ -14,16 +13,16 @@ plagiarism_checker_t::plagiarism_checker_t(std::vector<std::shared_ptr<submissio
         to_check.push_back({0, i, false});
     }
     processor = std::thread(&plagiarism_checker_t::process_submissions, this);
-    stop = false;
 }
 
 plagiarism_checker_t::~plagiarism_checker_t() {
     // join the thread and terminate after processing is done
-    while (!pipe.empty()) {
-        // do nothing
+    {
+        std::unique_lock<std::mutex> lock(queue_mutex);
+        stop = true;
     }
-    stop = true;
-    processor.join();
+    cv.notify_all();
+    if (processor.joinable()) processor.join();
 }
 
 // updates the flags if plag has taken place
@@ -80,31 +79,37 @@ void plagiarism_checker_t::check_two_submissions(std::pair<int, std::shared_ptr<
 }
 
 void plagiarism_checker_t::process_submissions() {
-    while (!stop) {
-        if (!pipe.empty()) {
-            // retreiving data of the next submission to be processed
-            int curr_time = std::get<0>(pipe.front());
-            std::shared_ptr<submission_t> __submission = std::get<1>(pipe.front());
-            int num_to_check = std::get<2>(pipe.front());
+    while (true) {
+        std::tuple<int, std::shared_ptr<submission_t>, int> submission;
+        {
+            std::unique_lock<std::mutex> lock(queue_mutex);
+            cv.wait(lock, [this] { return stop || !pipe.empty(); });
+            if (stop && pipe.empty()) return;
+            submission = pipe.front();
             pipe.pop();
+        }
 
-            int matches_last_second = 0;  // total number of matches with submissions made in last second
-            for (int i = num_to_check - 1; i >= 0; i--) {
-                std::pair<int, std::shared_ptr<submission_t>> curr = {curr_time, __submission};
-                std::pair<int, std::shared_ptr<submission_t>> prev = {std::get<0>(to_check[i]), std::get<1>(to_check[i])};
+        // Process the submission outside the lock
+        int curr_time = std::get<0>(submission);
+        auto __submission = std::get<1>(submission);
+        int num_to_check = std::get<2>(submission);
 
-                if (prev.first <= std::max(curr.first - 1000, 0) &&
-                    std::get<2>(to_check[num_to_check])) break;
+        int matches_last_second = 0;
+        for (int i = num_to_check - 1; i >= 0; i--) {
+            std::pair<int, std::shared_ptr<submission_t>> curr = {curr_time, __submission};
+            std::pair<int, std::shared_ptr<submission_t>> prev = {std::get<0>(to_check[i]), std::get<1>(to_check[i])};
 
-                check_two_submissions(curr, prev, i, num_to_check, matches_last_second);
-            }
+            if (prev.first <= std::max(curr.first - 1000, 0) &&
+                std::get<2>(to_check[num_to_check])) break;
 
-            // flagging for patchwork plagiarism
-            if (!std::get<2>(to_check[num_to_check]) && matches_last_second >= 20) {
-                std::get<2>(to_check[num_to_check]) = true;
-                __submission->student->flag_student(__submission);
-                __submission->professor->flag_professor(__submission);
-            }
+            check_two_submissions(curr, prev, i, num_to_check, matches_last_second);
+        }
+
+        // Flagging for patchwork plagiarism
+        if (!std::get<2>(to_check[num_to_check]) && matches_last_second >= 20) {
+            std::get<2>(to_check[num_to_check]) = true;
+            __submission->student->flag_student(__submission);
+            __submission->professor->flag_professor(__submission);
         }
     }
 }
@@ -112,8 +117,12 @@ void plagiarism_checker_t::process_submissions() {
 void plagiarism_checker_t::add_submission(std::shared_ptr<submission_t> __submission) {
     int curr_time = curr_time_millis();
     int num_to_check = to_check.size();
-    to_check.push_back({curr_time, __submission, false});
-    pipe.push({curr_time, __submission, num_to_check});
+    {
+        std::lock_guard<std::mutex> lock(queue_mutex);
+        to_check.push_back({curr_time, __submission, false});
+        pipe.push({curr_time, __submission, num_to_check});
+    }
+    cv.notify_one();
 }
 
 int plagiarism_checker_t::curr_time_millis() {

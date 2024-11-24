@@ -1,6 +1,8 @@
 #include "structures.hpp"
 // -----------------------------------------------------------------------------
+#include <atomic>
 #include <chrono>
+#include <condition_variable>
 #include <iostream>
 #include <mutex>
 #include <queue>
@@ -26,7 +28,9 @@ class plagiarism_checker_t {
     std::queue<std::tuple<int, std::shared_ptr<submission_t>, int>> pipe;        // `{time, submission, number of previous files}`
     std::vector<std::tuple<int, std::shared_ptr<submission_t>, bool>> to_check;  // `{time, submission, flagged?}`
     std::thread processor;
-    bool stop;
+    std::atomic<bool> stop;
+    std::mutex queue_mutex;
+    std::condition_variable cv;
 
     int curr_time_millis();
     // void push_submission(std::shared_ptr<submission_t>, int, int);
