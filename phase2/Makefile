@@ -1,4 +1,4 @@
-all: hogwarts hogwarts-thread ainur ainur-thread
+all: hogwarts ainur
 
 CXX = clang++
 CXXWARNINGS = -Wall -Wshadow -Wuninitialized -Wtype-limits -Wno-unused-variable
@@ -8,7 +8,7 @@ INCLUDEFLAGS = -I/usr/lib/llvm-18/include
 LDFLAGS = -lclang -L/usr/lib/llvm-18/lib -rpath /usr/lib/llvm-18/lib -fuse-ld=lld
 
 # The build directory
-BUILDDIR = ~/build
+BUILDDIR = $(HOME)/build
 
 hogwarts: $(BUILDDIR)/main
 	@echo "\033[1;34mTestcase: hogwarts\033[0m"
@@ -16,21 +16,21 @@ hogwarts: $(BUILDDIR)/main
 	diff -Bw hogwarts/expected.txt $(BUILDDIR)/output.txt
 	@rm $(BUILDDIR)/output.txt
 
-hogwarts-thread: $(BUILDDIR)/main-thread
-	@echo "\033[1;34mTestcase: hogwarts-thread\033[0m"
-	@$(BUILDDIR)/main-thread hogwarts 1> $(BUILDDIR)/output.txt 2> /dev/null
+hogwartsThread: $(BUILDDIR)/mainThread
+	@echo "\033[1;34mTestcase: hogwartsThread\033[0m"
+	@$(BUILDDIR)/mainThread hogwarts 1> $(BUILDDIR)/output.txt 2> /dev/null
 	diff -Bw hogwarts/expected.txt $(BUILDDIR)/output.txt
 	@rm $(BUILDDIR)/output.txt
 
 ainur: $(BUILDDIR)/main
 	@echo "\033[1;34mTestcase: ainur\033[0m"
-	@$(BUILDDIR)/main ainur 1> $(BUILDDIR)/output.txt 2> /dev/null 2> /dev/null
+	@$(BUILDDIR)/main ainur 1> $(BUILDDIR)/output.txt 2> /dev/null
 	diff -Bw ainur/expected.txt $(BUILDDIR)/output.txt
 	@rm $(BUILDDIR)/output.txt
 
-ainur-thread: $(BUILDDIR)/main-thread
-	@echo "\033[1;34mTestcase: ainur-thread\033[0m"
-	@$(BUILDDIR)/main-thread ainur 1> $(BUILDDIR)/output.txt 2> /dev/null
+ainurThread: $(BUILDDIR)/mainThread
+	@echo "\033[1;34mTestcase: ainurThread\033[0m"
+	@$(BUILDDIR)/mainThread ainur 1> $(BUILDDIR)/output.txt 2> /dev/null
 	diff -Bw ainur/expected.txt $(BUILDDIR)/output.txt
 	@rm $(BUILDDIR)/output.txt
 
@@ -38,11 +38,11 @@ $(BUILDDIR)/main: main.cpp plagiarism_checker.cpp tokenizer.cpp
 	@mkdir -p $(BUILDDIR)
 	@$(CXX) $(CXXFLAGS) $(INCLUDEFLAGS) $(LDFLAGS) $^ -o $@
 
-$(BUILDDIR)/main-thread: main.cpp plagiarism_checker.cpp tokenizer.cpp
+$(BUILDDIR)/mainThread: main.cpp plagiarism_checker.cpp tokenizer.cpp
 	@mkdir -p $(BUILDDIR)
 	@$(CXX) $(CXXTHREADFLAGS) $(INCLUDEFLAGS) $(LDFLAGS) $^ -o $@
 
 clean:
 	rm -rf $(BUILDDIR)
 
-.PHONY: all hogwarts hogwarts-thread ainur ainur-thread $(BUILDDIR)/main $(BUILDDIR)/main-thread clean
+.PHONY: all hogwarts hogwartsThread ainur ainurThread $(BUILDDIR)/main $(BUILDDIR)/mainThread clean
