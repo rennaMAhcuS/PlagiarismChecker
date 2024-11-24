@@ -1,17 +1,52 @@
+all: hogwarts hogwarts-thread ainur ainur-thread
+
 CXX = clang++
 CXXWARNINGS = -Wall -Wshadow -Wuninitialized -Wtype-limits -Wno-unused-variable
-CXXFLAGS = -std=gnu++20 -g -fsanitize=thread,undefined $(CXXWARNINGS)
+CXXFLAGS = -std=gnu++20 -g -fsanitize=address,undefined $(CXXWARNINGS)
+CXXTHREADFLAGS = -std=gnu++20 -g -fsanitize=thread,undefined $(CXXWARNINGS)
 INCLUDEFLAGS = -I/usr/lib/llvm-18/include
 LDFLAGS = -lclang -L/usr/lib/llvm-18/lib -rpath /usr/lib/llvm-18/lib -fuse-ld=lld
 
-main: main.cpp plagiarism_checker.cpp tokenizer.cpp
-	$(CXX) $(CXXFLAGS) $(INCLUDEFLAGS) $(LDFLAGS) $^ -o $@
-	./main hogwarts > output.txt
-	diff -Bw hogwarts/expected.txt output.txt
-	./main ainur > output.txt
-	diff -Bw ainur/expected.txt output.txt
+# The build directory
+BUILDDIR = $(HOME)/build
+
+hogwarts: $(BUILDDIR)/main
+	@echo "\033[1;34mTestcase: hogwarts\033[0m"
+	@$(BUILDDIR)/main hogwarts 1> $(BUILDDIR)/output.txt
+	diff -Bw hogwarts/expected.txt $(BUILDDIR)/output.txt
+	@rm $(BUILDDIR)/output.txt
+
+hogwarts-thread: $(BUILDDIR)/main-thread
+	@echo "\033[1;34mTestcase: hogwarts-thread\033[0m"
+	@$(BUILDDIR)/main-thread hogwarts 1> $(BUILDDIR)/output.txt
+	diff -Bw hogwarts/expected.txt $(BUILDDIR)/output.txt
+	@rm $(BUILDDIR)/output.txt
+
+ainur: $(BUILDDIR)/main
+	@echo "\033[1;34mTestcase: ainur\033[0m"
+	@$(BUILDDIR)/main ainur 1> $(BUILDDIR)/output.txt
+	diff -Bw ainur/expected.txt $(BUILDDIR)/output.txt
+	@rm $(BUILDDIR)/output.txt
+
+ainur-thread: $(BUILDDIR)/main-thread
+	@echo "\033[1;34mTestcase: ainur-thread\033[0m"
+	@$(BUILDDIR)/main-thread ainur 1> $(BUILDDIR)/output.txt
+	diff -Bw ainur/expected.txt $(BUILDDIR)/output.txt
+	@rm $(BUILDDIR)/output.txt
+
+$(BUILDDIR)/main: main.cpp plagiarism_checker.cpp tokenizer.cpp
+	@mkdir -p $(BUILDDIR)
+	@$(CXX) $(CXXFLAGS) $(INCLUDEFLAGS) $(LDFLAGS) $^ -o $@
+
+$(BUILDDIR)/main-thread: main.cpp plagiarism_checker.cpp tokenizer.cpp
+	@mkdir -p $(BUILDDIR)
+	@$(CXX) $(CXXTHREADFLAGS) $(INCLUDEFLAGS) $(LDFLAGS) $^ -o $@
+
+$(BUILDDIR)/main-nosanitize: main.cpp plagiarism_checker.cpp tokenizer.cpp
+	@mkdir -p $(BUILDDIR)
+	@$(CXX) $(CXXFLAGS) $(INCLUDEFLAGS) $(LDFLAGS) $^ -o $@
 
 clean:
-	rm -rf main output.txt *.dSYM
+	rm -rf $(BUILDDIR)
 
-.PHONY: main clean
+.PHONY: all hogwarts hogwarts-thread ainur ainur-thread $(BUILDDIR)/main $(BUILDDIR)/main-thread $(BUILDDIR)/main-nosanitize clean
