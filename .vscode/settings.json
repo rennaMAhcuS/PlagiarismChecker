@@ -80,6 +80,19 @@
         "text_encoding": "cpp",
         "thread": "cpp",
         "numbers": "cpp",
-        "semaphore": "cpp"
+        "semaphore": "cpp",
+        "codecvt": "cpp",
+        "set": "cpp",
+        "unordered_set": "cpp",
+        "numeric": "cpp",
+        "cinttypes": "cpp",
+        "__bits": "cpp",
+        "__config": "cpp",
+        "__debug": "cpp",
+        "__errc": "cpp",
+        "__mutex_base": "cpp",
+        "__nullptr": "cpp",
+        "__string": "cpp",
+        "__tuple": "cpp"
     }
 }

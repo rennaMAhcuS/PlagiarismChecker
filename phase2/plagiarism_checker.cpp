@@ -11,7 +11,7 @@
 /**
  * @brief Constructor
  */
-plagiarism_checker_t::plagiarism_checker_t() : stop(false), max_threads(3) {
+plagiarism_checker_t::plagiarism_checker_t() : stop(false), max_threads(2) {
     submission_processor_thread = std::thread(&plagiarism_checker_t::submission_processor, this);
     for (size_t i = 0; i < max_threads; ++i) {
         thread_pool.emplace_back(&plagiarism_checker_t::worker_thread, this);
@@ -23,7 +23,7 @@ plagiarism_checker_t::plagiarism_checker_t() : stop(false), max_threads(3) {
  * storing tokens of each file in a map, remaining same as prev
  */
 plagiarism_checker_t::plagiarism_checker_t(std::vector<std::shared_ptr<submission_t>> __submissions)
-    : stop(false), max_threads(3) {
+    : stop(false), max_threads(2) {
     int64_t curr_time = curr_time_millis();
     for (auto& submission : __submissions) {
         submissions_list.emplace_back(curr_time, submission, false);

@@ -3,7 +3,7 @@
 \usepackage{hyperref}
 \usepackage{enumitem}
 
-\geometry{a4paper, margin=1in}
+\geometry{a4paper, margin=0.7in}
 
 \title{Plagiarism Checker Design Document}
 \author{Mohana Evuri, Shaik Awez Mehtab, Abhineet Majety}
@@ -13,96 +13,126 @@
 
 \maketitle
 
-\section{Introduction}
-Concise explanation of the plagiarism checker project, objectives, and scope.
-
 \section{Phase 1}
 
-\subsection{Net Length Calculation}
+\subsection{Net Length of Exact Matches Calculation}
 \begin{itemize}[noitemsep]
-    \item \textbf{Algorithm:} Describe the algorithm used to calculate net length of accurate matches.
+    \item \textbf{Algorithm:} 
+    \begin{itemize}
+        \item For each matching length ``len'' in the range $\{10, 11, \ldots, 20\}$, the number of matching substrings are counted and added them up.
+        \item The substrings of each length are compared efficiently by \texttt{reinterpret\_cast}, using which a vector of integers is hashed to a sequence of bytes.
+    \end{itemize} 
     \item \textbf{Function Signatures:} 
     \begin{itemize}
-        \item \texttt{int calculateNetLength(matches)}
+        \item \texttt{int numExactMatches(const std::vector<int>\&, const std::vector<int>\&)} \\
+        Computes the number of exact matches
     \end{itemize}
 \end{itemize}
 
 \subsection{Longest Approximate Match}
 \begin{itemize}[noitemsep]
-    \item \textbf{Algorithm:} Explain the algorithm for finding the longest approximate match and its start indices.
+    \item \textbf{Algorithm:} For each pair of start indices of the two vectors, the length of longest approximate match is found. This is done by simply traversing through the vectors. 
     \item \textbf{Function Signatures:}
     \begin{itemize}
-        \item \texttt{Match findLongestApproxMatch(submission, reference)}
+        \item \texttt{std::array<int,3> findLongestApproxMatch(std::vector<int>\&, std::vector<int>\&)} \\
+        Finds the longest approximate match and the respective start indices
     \end{itemize}
 \end{itemize}
 
-\subsection{Helpers and Data Structures}
+\subsection{Helper Functions}
 \begin{itemize}[noitemsep]
-    \item \textbf{Helpers:} List helper functions used.
-    \item \textbf{Data Structures:} Describe key data structures.
-    \item \textbf{Flow:} Overview from \texttt{match\_submission} call to return.
+    \item \texttt{SubstrMap allSubstrHashes(const std::vector<int>\&, int)} \\
+    Hashes all substrings of a given length 
+    \item \texttt{std::string getHash(const std::vector<int>\&, int, int)} \\
+    Hashes a vector of integers
+    \item \texttt{bool isAlreadyChecked(const std::vector<bool>\&, int, int)} \\
+    Checks if a substring was already matched
+    \item \texttt{bool isPlagged(const int, const int, const int, const int)} \\
+    Given the lengths of submissions, number of matches and maximum approximate match length, determines if plagiarism has taken place
+\end{itemize}
+
+\subsection{Overall code flow}
+\begin{itemize}[noitemsep]
+     
+    \item \textbf{Data Structures:} We have used \textbf{vector} and \textbf{unordered multimap} in our implementation
+    \item \textbf{Flow:} \begin{itemize}
+        \item When \texttt{match\_submissions} is called, it calls \texttt{numExactMatches}, \texttt{longestApproxMatch} and \texttt{isPlagged} in that order
+        \item \texttt{numExactMatches} uses \texttt{isAlreadyChecked} and \texttt{allSubstrHashes}, which uses \texttt{getHash}
+    \end{itemize}
 \end{itemize}
 
 \subsection{Complexity Analysis}
+Let $n$, $m$ be the submission sizes.
 \begin{itemize}[noitemsep]
-    \item \textbf{Time Complexity:} Brief explanation.
-    \item \textbf{Space Complexity:} Brief explanation.
+    \item \textbf{Time Complexity:} $O(nm\cdot\min(n, m))$: Computation of number of exact matches takes $O(nm)$ time. Finding the longest approximate matching substring takes $O(nm\cdot\min(n, m))$ time.
+    \item \textbf{Space Complexity:} $O(n + m)$: Computation of number of exact matches takes $O(n + m)$ space. Finding the longest approximate matching substring takes $O(1)$ space.
 \end{itemize}
 
 \section{Phase 2}
 
-\subsection{Long Pattern Match Detection}
+\subsection{Plagiarism Detection}
 \begin{itemize}[noitemsep]
-    \item \textbf{Algorithm:} Describe detection of long pattern matches against any file.
-    \item \textbf{Function Signatures:}
+    \item \textbf{Algorithm:} Dynamic programming is being used. For each pair of indices $i, j$ of the vectors, the length of matching substring ending at the indices is recorded.
     \begin{itemize}
-        \item \texttt{bool detectLongPattern(submission, file)}
+        \item \textbf{Short Pattern Match Detection}: Whenever the length of matching substring equals 15, the number of matches is incremented
+        \item \textbf{Long Pattern Match Detection}: For each pair of indices, the length of longest match is updated if needed
+        \item \textbf{Patchwork Plagiarism Detection}: For each submission, the number of matches with submissions made in the last one second are recorded. Flagging is done based on this measure.
     \end{itemize}
-\end{itemize}
-
-\subsection{Patchwork Plagiarism Detection}
-\begin{itemize}[noitemsep]
-    \item \textbf{Algorithm:} Explain detection of patchwork plagiarism.
     \item \textbf{Function Signatures:}
     \begin{itemize}
-        \item \texttt{bool detectPatchwork(submission, file)}
-    \end{itemize}
-\end{itemize}
-
-\subsection{Short Pattern Match Detection}
-\begin{itemize}[noitemsep]
-    \item \textbf{Algorithm:} Describe detection of short pattern matches for flagging.
-    \item \textbf{Function Signatures:}
-    \begin{itemize}
-        \item \texttt{bool detectShortPattern(submission, file)}
+        \item \texttt{std::pair<int,int> size\_of\_match(std::vector<int>\&, std::vector<int>\&)} \\
+        Calculates number of exact matches and longest exact match
+        \item \texttt{void plagiarism\_checker\_t::check\_two\_submissions(int, int, int\&)} \\
+        Checks if two submissions are similar and flags them if necessary
+        \item \texttt{void plagiarism\_checker\_t::compare\_submissions(int)} \\
+        Compares the current submission with all previous submissions and flags in case of patchwork plagiarism
     \end{itemize}
 \end{itemize}
 
 \subsection{Complexity Analysis}
+Let number of files be $m$ and average number of tokens per file be $n$.
 \begin{itemize}[noitemsep]
-    \item \textbf{Time Complexity:} Analysis in terms of number of files (m) and tokens per file (n).
-    \item \textbf{Space Complexity:} Analysis in terms of m and n.
+    \item \textbf{Time Complexity:} $O(mn^2)$: Comparing two submissions takes $O(n^2)$ time, and there are $O(m)$ files to compare for each submission.
+    \item \textbf{Space Complexity:} $O(mn)$: A cache of tokens of all previous submissions is maintained, which takes $O(mn)$ space. The vectors and queues take $O(m)$ space.
 \end{itemize}
 
 \subsection{Concurrency Features}
 \begin{itemize}[noitemsep]
-    \item \textbf{Threading:} Usage of threading to make \texttt{add\_submission} non-blocking.
-    \item \textbf{Concurrency:} How concurrency is managed in the main thread.
+    \item \textbf{Threading:} Threading isused to make \texttt{add\_submission} non-blocking and process submissions parallelly:
+    \begin{itemize}
+        \item The function \texttt{add\_submission} pushes the submission to a queue. Submissions are processed in \texttt{submission\_processor\_thread}. Submission is made non-blocking in this way.
+        \item \texttt{submission\_processor\_thread} maintains the metadata in \texttt{submissions\_list} and initiates tasks in \texttt{tasks\_queue}. The two threads in \texttt{thread\_pool} perfrm the actual processing of comparing and flagging submissions.
+    \end{itemize}
+    \item \textbf{Concurrency:} 
+    \begin{itemize}
+        \item Concurrency is maintained using \texttt{mutex} and locks to avoid data races when shared data is being used.
+        \item Conditional variables \texttt{cv} and \texttt{tasks\_cv} are used to send signals, so that threads wait passively.
+        \item  Atomic variable \texttt{stop} is used for proper termination of code in presence of threading.
+    \end{itemize} 
 \end{itemize}
 
 \subsection{File Identification}
-\begin{itemize}[noitemsep]
-    \item \textbf{Mechanism:} How the set of files to check against is identified within one second after submission timestamp.
-\end{itemize}
+When a submission is made, it is checked against each file submitted before it via the vector \texttt{submissions\_list}. If a submission was made within one second before the submission, even that is flagged, if it was not already flagged. The vector maintains the pointer, time stamp and the status(flagged/not flagged) of every submission.
 
 \subsection{Helpers and Data Structures}
 \begin{itemize}[noitemsep]
-    \item \textbf{Helpers:} List helper functions used in Phase 2.
-    \item \textbf{Data Structures:} Describe key data structures used.
-    \item \textbf{Flow:} Overview from constructor to destructor of \texttt{plagiarism\_checker\_t}.
+    \item \textbf{Helpers:}
+    \item \begin{itemize}
+        \item \texttt{void plagiarism\_checker\_t::submission\_processor()} \\
+        Updates metadata of each new submission
+        \item \texttt{void plagiarism\_checker\_t::worker\_thread()} \\
+        Calls \texttt{compare\_submissions} ensuring no memory races
+        \item \texttt{int64\_t plagiarism\_checker\_t::curr\_time\_millis()} \\
+        Gives the current time according to \texttt{steady\_clock}
+    \end{itemize}
+    \item \textbf{Data Structures:} The data structures \textbf{queue} and \textbf{vector} are used.
+    \item \textbf{Flow:} 
+    \begin{itemize}
+        \item In the constructor, threads are started and the vector is initialised with initial submissions.
+        \item When \texttt{add\_submission} is called, the submission is pushed to a queue.
+        \item Processing is done by the other threads, leaving the main thread free.
+        \item When the destructor is called, threads are notified thatthere will be no more submissions and joined to the main thread.
+    \end{itemize}
 \end{itemize}
-
-\section{Conclusion}
-Summary of the design and its effectiveness in detecting plagiarism.
 
 \end{document}
