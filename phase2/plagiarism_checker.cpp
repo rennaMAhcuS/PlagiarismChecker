@@ -176,7 +176,7 @@ void plagiarism_checker_t::compare_submissions(int curr_index) {
 /**
  * @brief Returns number of exact matches and longest exact match
  */
-std::pair<int, int> size_of_match(std::vector<int>& curr_tokens, std::vector<int>& prev_tokens) {
+std::pair<int, int> plagiarism_checker_t::size_of_match(std::vector<int>& curr_tokens, std::vector<int>& prev_tokens) {
     int num_matches = 0;
     int max_match_length = 0;
     int curr_size = curr_tokens.size();
