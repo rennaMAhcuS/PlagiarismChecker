@@ -29,7 +29,8 @@ plagiarism_checker_t::~plagiarism_checker_t() {
 // updates `matches_last_second` if `prev` is within 1 second of `curr`
 // args: {curr_time, curr_submission}, {prev_time, prev_submission}, prev_index, curr_index, matches_last_second(to be updated)
 void plagiarism_checker_t::check_two_submissions(std::pair<int, std::shared_ptr<submission_t>> curr,
-                                                 std::pair<int, std::shared_ptr<submission_t>> prev, int prev_index, int curr_index, int& matches_last_second) {
+                                                 std::pair<int, std::shared_ptr<submission_t>> prev,
+                                                 int prev_index, int curr_index, int& matches_last_second) {
     std::vector<int> curr_tokens = tokenizer_t(curr.second->codefile).get_tokens();
     std::vector<int> prev_tokens = tokenizer_t(prev.second->codefile).get_tokens();
 
@@ -56,20 +57,6 @@ void plagiarism_checker_t::check_two_submissions(std::pair<int, std::shared_ptr<
         }
         std::swap(curr_row, prev_row);
     }
-
-    // Takes O(n*m) space
-    // for (int i = 1; i <= curr_size; ++i) {
-    //     for (int j = 1; j <= prev_size; ++j) {
-    //         if (curr_tokens[i - 1] == prev_tokens[j - 1]) {
-    //             curr_row[j] = prev_row[j - 1] + 1;
-    //             if (curr_row[j] == 15) num_matches++;
-    //             max_match_length = std::max(max_match_length, curr_row[j]);
-    //         } else {
-    //             curr_row[j] = 0;
-    //         }
-    //     }
-    //     std::swap(curr_row, prev_row);
-    // }
 
     // end TODO
 

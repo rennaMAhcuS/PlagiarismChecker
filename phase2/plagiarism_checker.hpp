@@ -27,7 +27,7 @@ class plagiarism_checker_t {
     // TODO: Add members and function signatures here
     std::queue<std::tuple<int, std::shared_ptr<submission_t>, int>> pipe;        // `{time, submission, number of previous files}`
     std::vector<std::tuple<int, std::shared_ptr<submission_t>, bool>> to_check;  // `{time, submission, flagged?}`
-    std::thread processor;
+    std::thread processor, processor2;
     std::atomic<bool> stop;
     std::mutex queue_mutex;
     std::condition_variable cv;
