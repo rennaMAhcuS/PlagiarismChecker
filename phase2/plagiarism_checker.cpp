@@ -29,9 +29,8 @@ plagiarism_checker_t::~plagiarism_checker_t() {
 // updates the flags if plag has taken place
 // updates `matches_last_second` if `prev` is within 1 second of `curr`
 // args: {curr_time, curr_submission}, {prev_time, prev_submission}, prev_index, curr_index, matches_last_second(to be updated)
-void plagiarism_checker_t::check_two_submissions(std::pair<int, std::shared_ptr<submission_t>> curr, 
-    std::pair<int, std::shared_ptr<submission_t>> prev, int prev_index, int curr_index, int& matches_last_second) {
-
+void plagiarism_checker_t::check_two_submissions(std::pair<int, std::shared_ptr<submission_t>> curr,
+                                                 std::pair<int, std::shared_ptr<submission_t>> prev, int prev_index, int curr_index, int& matches_last_second) {
     std::vector<int> curr_tokens = tokenizer_t(curr.second->codefile).get_tokens();
     std::vector<int> prev_tokens = tokenizer_t(prev.second->codefile).get_tokens();
 
@@ -39,7 +38,7 @@ void plagiarism_checker_t::check_two_submissions(std::pair<int, std::shared_ptr<
     int max_match_length = 0;
 
     // TODO: calculate `num_matches` and `max_match_length`
-    
+
     int curr_size = curr_tokens.size();
     int prev_size = prev_tokens.size();
     std::vector<std::vector<int>> dp(curr_size + 1, std::vector<int>(prev_size + 1, 0));
@@ -58,7 +57,7 @@ void plagiarism_checker_t::check_two_submissions(std::pair<int, std::shared_ptr<
     // flagging
     if (num_matches >= 10 || max_match_length >= 75) {
         // flagging previous submission
-        if (!std::get<2>(to_check[prev_index]) && 
+        if (!std::get<2>(to_check[prev_index]) &&
             prev.first > std::max(0, curr.first - 1000)) {
             std::get<2>(to_check[prev_index]) = true;
             prev.second->student->flag_student(prev.second);
@@ -72,7 +71,7 @@ void plagiarism_checker_t::check_two_submissions(std::pair<int, std::shared_ptr<
         }
     }
 
-    //updating `matches_last_second`
+    // updating `matches_last_second`
     if (prev.first > 0 && prev.first >= curr.first - 1000) {
         matches_last_second += num_matches;
     }
@@ -81,8 +80,7 @@ void plagiarism_checker_t::check_two_submissions(std::pair<int, std::shared_ptr<
 }
 
 void plagiarism_checker_t::process_submissions() {
-    
-    while (!stop) { 
+    while (!stop) {
         if (!pipe.empty()) {
             // retreiving data of the next submission to be processed
             int curr_time = std::get<0>(pipe.front());
@@ -90,8 +88,8 @@ void plagiarism_checker_t::process_submissions() {
             int num_to_check = std::get<2>(pipe.front());
             pipe.pop();
 
-            int matches_last_second = 0; // total number of matches with submissions made in last second
-            for(int i = num_to_check - 1; i >= 0; i--) {
+            int matches_last_second = 0;  // total number of matches with submissions made in last second
+            for (int i = num_to_check - 1; i >= 0; i--) {
                 std::pair<int, std::shared_ptr<submission_t>> curr = {curr_time, __submission};
                 std::pair<int, std::shared_ptr<submission_t>> prev = {std::get<0>(to_check[i]), std::get<1>(to_check[i])};
 

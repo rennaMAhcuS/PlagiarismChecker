@@ -1,10 +1,10 @@
 #include "structures.hpp"
 // -----------------------------------------------------------------------------
-#include <queue>
 #include <chrono>
 #include <iostream>
-#include <thread>
 #include <mutex>
+#include <queue>
+#include <thread>
 
 // You are free to add any STL includes above this comment, below the --line--.
 // DO NOT add "using namespace std;" or include any other files/libraries.
@@ -23,8 +23,8 @@ class plagiarism_checker_t {
 
    protected:
     // TODO: Add members and function signatures here
-    std::queue<std::tuple<int, std::shared_ptr<submission_t>, int>> pipe; // `{time, submission, number of previous files}`
-    std::vector<std::tuple<int, std::shared_ptr<submission_t>, bool>> to_check; // `{time, submission, flagged?}`
+    std::queue<std::tuple<int, std::shared_ptr<submission_t>, int>> pipe;        // `{time, submission, number of previous files}`
+    std::vector<std::tuple<int, std::shared_ptr<submission_t>, bool>> to_check;  // `{time, submission, flagged?}`
     std::thread processor;
     bool stop;
 

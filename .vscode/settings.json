@@ -1,5 +1,6 @@
 {
     "C_Cpp.clang_format_fallbackStyle": "{BasedOnStyle: Google, IndentWidth: 4, ColumnLimit: 0, AllowShortFunctionsOnASingleLine: All, BreakBeforeBraces: Attach}",
+    "editor.formatOnSave": true,
     "files.associations": {
         "__bit_reference": "cpp",
         "__hash_table": "cpp",
