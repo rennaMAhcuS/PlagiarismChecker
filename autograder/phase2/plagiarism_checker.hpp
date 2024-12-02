@@ -7,6 +7,7 @@
 #include <mutex>
 #include <queue>
 #include <thread>
+#include <unordered_map>
 
 // You are free to add any STL includes above this comment, below the --line--.
 // DO NOT add "using namespace std;" or include any other files/libraries.

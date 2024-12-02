@@ -1,11 +1,12 @@
-#include "plagiarism_checker.hpp"
-
-#include <algorithm>
-#include <map>
+#include <signal.h>
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <unistd.h>
-#include <signal.h>
+
+#include <algorithm>
+#include <map>
+
+#include "plagiarism_checker.hpp"
 
 // You should NOT modify ANYTHING in this file.
 
@@ -23,24 +24,24 @@ void professor_t::flag_professor(std::shared_ptr<submission_t> __submission) {
 }
 
 namespace testcase {
-    std::string test_dir;
-    std::map<std::string, std::shared_ptr<student_t>> students; 
-    std::map<std::string, std::shared_ptr<professor_t>> professors; 
-    std::vector<std::shared_ptr<submission_t>> pre_existing_codes;
-    void handle_sigchld(int sig);
-    void get_students(void);
-    void get_professors(void);
-    void get_pre_existing_codes(void);
-    void execute_testcase();
-    double precision_times_recall(std::vector<long> flagged_students, 
-                                  std::vector<long> expected_students);
-    void print_and_clear(std::vector<long>& flagged_students, 
-                         std::vector<long>& expected_students);
-    void redirect_and_time_wrapper(double time_limit);
-    double output_wrapper(double weightage, int status);
-    double testcase_wrapper(std::string test_dir, double weightage,
-                            double time_limit);
-}
+std::string test_dir;
+std::map<std::string, std::shared_ptr<student_t>> students;
+std::map<std::string, std::shared_ptr<professor_t>> professors;
+std::vector<std::shared_ptr<submission_t>> pre_existing_codes;
+void handle_sigchld(int sig);
+void get_students(void);
+void get_professors(void);
+void get_pre_existing_codes(void);
+void execute_testcase();
+double precision_times_recall(std::vector<long> flagged_students,
+                              std::vector<long> expected_students);
+void print_and_clear(std::vector<long>& flagged_students,
+                     std::vector<long>& expected_students);
+void redirect_and_time_wrapper(double time_limit);
+double output_wrapper(double weightage, int status);
+double testcase_wrapper(std::string test_dir, double weightage,
+                        double time_limit);
+}  // namespace testcase
 
 void testcase::handle_sigchld(int sig) {
     int status;
@@ -63,7 +64,7 @@ void testcase::get_students(void) {
     std::ifstream in(filename);
     std::string student_name;
     while (in >> student_name) {
-        testcase::students[student_name] = 
+        testcase::students[student_name] =
             std::make_shared<student_t>(student_name);
     }
     in.close();
@@ -74,7 +75,7 @@ void testcase::get_professors(void) {
     std::ifstream in(filename);
     std::string professor_name;
     while (in >> professor_name) {
-        testcase::professors[professor_name] = 
+        testcase::professors[professor_name] =
             std::make_shared<professor_t>(professor_name);
     }
     in.close();
@@ -88,7 +89,7 @@ void testcase::get_pre_existing_codes(void) {
     std::string token;
     std::string code_file;
     while (in >> id >> student_name >> professor_name >> code_file) {
-        std::shared_ptr<submission_t> submission = 
+        std::shared_ptr<submission_t> submission =
             std::make_shared<submission_t>();
         submission->id = id;
         submission->student = testcase::students[student_name];
@@ -98,7 +99,6 @@ void testcase::get_pre_existing_codes(void) {
     }
     in.close();
 }
-
 
 void testcase::execute_testcase(void) {
     testcase::get_students();
@@ -114,7 +114,7 @@ void testcase::execute_testcase(void) {
     std::string code_file;
     while (in >> timestamp >> id >> student_name >> prof_name >> code_file) {
         usleep((timestamp - old_timestamp) * 1000000);
-        std::shared_ptr<submission_t> submission = 
+        std::shared_ptr<submission_t> submission =
             std::make_shared<submission_t>();
         submission->id = id;
         submission->student = testcase::students[student_name];
@@ -126,7 +126,7 @@ void testcase::execute_testcase(void) {
     in.close();
 }
 
-double testcase::precision_times_recall(std::vector<long> flagged_students, 
+double testcase::precision_times_recall(std::vector<long> flagged_students,
                                         std::vector<long> expected_students) {
     if (expected_students.empty()) {
         return flagged_students.empty() ? 1.0 : 0.0;
@@ -149,11 +149,11 @@ double testcase::precision_times_recall(std::vector<long> flagged_students,
             j++;
         }
     }
-    return static_cast<double>(true_positives * true_positives) / 
+    return static_cast<double>(true_positives * true_positives) /
            (flagged_students.size() * expected_students.size());
 }
 
-void testcase::print_and_clear(std::vector<long>& flagged_students, 
+void testcase::print_and_clear(std::vector<long>& flagged_students,
                                std::vector<long>& expected_students) {
     std::cout << "Flagged  submission IDs: ";
     for (int i = 0; i < flagged_students.size(); i++) {
@@ -214,12 +214,12 @@ double testcase::output_wrapper(double weightage, int status) {
     }
     expected.close();
     testcase::print_and_clear(flagged_students, expected_students);
-    return weightage * testcase::precision_times_recall(flagged_students, 
-                                                       expected_students);
+    return weightage * testcase::precision_times_recall(flagged_students,
+                                                        expected_students);
 }
 
 double testcase::testcase_wrapper(std::string __test_dir, double weightage,
-        double time_limit = 0.0) {
+                                  double time_limit = 0.0) {
     std::cout << "Running test case: " << __test_dir << std::endl;
     testcase::test_dir = __test_dir;
     int pid;
@@ -235,19 +235,17 @@ double testcase::testcase_wrapper(std::string __test_dir, double weightage,
             exit(0);
         }
         waitpid(pid, NULL, 0);
-        std::cout << ((WEXITSTATUS(status) == 1) ? "Runtime error" :
-                ((WEXITSTATUS(status) == 2) ? "Time limit exceeded" :
-                 "Unknown error")) << std::endl;
+        std::cout << ((WEXITSTATUS(status) == 1) ? "Runtime error" : ((WEXITSTATUS(status) == 2) ? "Time limit exceeded" : "Unknown error")) << std::endl;
         return 0.0;
     }
     return testcase::output_wrapper(weightage, status);
 }
 
 int main(void) {
-    double score = testcase::testcase_wrapper("hogwarts", 1.0, 15.0);
-    score += testcase::testcase_wrapper("ainur", 1.0, 15.0);
-    score += testcase::testcase_wrapper("jedisith", 1.0, 15.0);
-    score += testcase::testcase_wrapper("avengers", 1.0, 10.0);
+    double score = testcase::testcase_wrapper("hogwarts", 1.0, 15);
+    score += testcase::testcase_wrapper("ainur", 1.0, 15);
+    score += testcase::testcase_wrapper("jedisith", 1.0, 15);
+    score += testcase::testcase_wrapper("avengers", 1.0, 10);
     score += testcase::testcase_wrapper("phase1_submissions", 1.0, 100.0);
     score += testcase::testcase_wrapper("justice_league", 1.0, 200.0);
     std::cout << "-----------------------------------------------" << std::endl;

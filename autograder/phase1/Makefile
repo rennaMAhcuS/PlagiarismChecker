@@ -4,11 +4,12 @@ CXXFLAGS = -std=gnu++20 -g $(CXXWARNINGS)
 INCLUDEFLAGS = -I/usr/lib/llvm-18/include
 LDFLAGS = -lclang -L/usr/lib/llvm-18/lib -rpath /usr/lib/llvm-18/lib -fuse-ld=lld
 
-main: main.cpp tokenizer.cpp
+BUILDDIR = $(HOME)/build
+
+$(BUILDDIR)/main: main.cpp tokenizer.cpp
+	@rm -rf $(BUILDDIR)
+	@mkdir -p $(BUILDDIR)
 	$(CXX) $(CXXFLAGS) $(INCLUDEFLAGS) $(LDFLAGS) $^ -o $@
-	rm -rf *.dSYM
 
 clean:
-	rm -rf main *.dSYM
-
-.PHONY: main clean
+	@rm -rf $(BUILDDIR)

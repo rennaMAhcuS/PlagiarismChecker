@@ -31,8 +31,17 @@ plagiarism_checker_t::~plagiarism_checker_t() {
 void plagiarism_checker_t::check_two_submissions(std::pair<int, std::shared_ptr<submission_t>> curr,
                                                  std::pair<int, std::shared_ptr<submission_t>> prev,
                                                  int prev_index, int curr_index, int& matches_last_second) {
-    std::vector<int> curr_tokens = tokenizer_t(curr.second->codefile).get_tokens();
-    std::vector<int> prev_tokens = tokenizer_t(prev.second->codefile).get_tokens();
+    static std::unordered_map<std::string, std::vector<int>> token_cache;
+
+    auto get_tokens = [&](const std::string& codefile) -> std::vector<int> {
+        if (token_cache.find(codefile) == token_cache.end()) {
+            token_cache[codefile] = tokenizer_t(codefile).get_tokens();
+        }
+        return token_cache[codefile];
+    };
+
+    std::vector<int> curr_tokens = get_tokens(curr.second->codefile);
+    std::vector<int> prev_tokens = get_tokens(prev.second->codefile);
 
     int num_matches = 0;
     int max_match_length = 0;

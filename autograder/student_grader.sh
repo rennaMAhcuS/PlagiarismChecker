@@ -1,6 +1,8 @@
 #!/bin/bash
 # This is for you, the student to execute
 
+BUILDDIR=$HOME/build
+
 a=0
 b=0
 cd phase1
@@ -8,7 +10,7 @@ if ! make; then
     make clean
     a=0
 else
-    ./main > ../one.txt
+    $BUILDDIR/main > ../one.txt
     make clean
     a=`cat ../one.txt | grep "Total" | awk '{print $3}'`
 fi
@@ -17,7 +19,7 @@ if ! make; then
     make clean
     b=0
 else
-    ./main > ../two.txt
+    $BUILDDIR/main > ../two.txt
     make clean
     b=`cat ../two.txt | grep "Total" | awk '{print $3}'`
 fi

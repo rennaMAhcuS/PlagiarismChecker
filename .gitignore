@@ -22,3 +22,5 @@
 *.fdb_latexmk
 *.synctex.gz
 *.xdv
+
+# autograder
