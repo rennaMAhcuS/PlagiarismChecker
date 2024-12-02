@@ -14,6 +14,9 @@ RUN useradd -ms /bin/bash ${USERNAME} && \
     echo "${USERNAME}:huffman" | chpasswd && \
     usermod -aG sudo ${USERNAME}
 
+RUN userdel ubuntu && \
+    rm -rf /home/ubuntu
+
 USER ${USERNAME}
 
 WORKDIR /home/${USERNAME}/plagiarism_checker
