@@ -1,0 +1,5 @@
+Running test case: hogwarts
+Time limit exceeded
+Running test case: ainur
+Time limit exceeded
+Running test case: jedisith
