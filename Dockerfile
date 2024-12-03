@@ -35,6 +35,8 @@ RUN echo "\
     export CSTRICT='-fsanitize=address,undefined,leak,bounds -Werror'\n\
     export CTHREAD='-fsanitize=thread,undefined,bounds -Werror'\n\
     export LSAN_OPTIONS=suppressions=${HOME}/.lsan.supp\n\n\
-    alias ..='cd ..'" >> ~/.bashrc
+    export BUILDDIR=$HOME/build\n\n\
+    alias ..='cd ..'\n\
+    alias rmbuild='rm -rf $BUILDDIR'" >> ~/.bashrc
 
 CMD ["bash"]

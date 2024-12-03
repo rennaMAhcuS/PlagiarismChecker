@@ -24,3 +24,15 @@ for a shorter command, use:
 ```sh
 docker start -ai NP-MOS
 ```
+
+## Instructions to add the formatter:
+
+If not present, create a `.vscode` directory in the project repository, create a new file called `settings.json` and add the following code in it:
+
+> **`settings.json`**
+>
+> ```json
+> {
+>   "C_Cpp.clang_format_fallbackStyle": "{BasedOnStyle: Google, IndentWidth: 4, ColumnLimit: 0, AllowShortFunctionsOnASingleLine: All, BreakBeforeBraces: Attach}"
+> }
+> ```

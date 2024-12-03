@@ -6,10 +6,11 @@ LDFLAGS = -lclang -L/usr/lib/llvm-18/lib -rpath /usr/lib/llvm-18/lib -fuse-ld=ll
 
 BUILDDIR = $(HOME)/build
 
-$(BUILDDIR)/main: main.cpp tokenizer.cpp
-	@rm -rf $(BUILDDIR)
+$(BUILDDIR)/phase1: main.cpp tokenizer.cpp
 	@mkdir -p $(BUILDDIR)
 	$(CXX) $(CXXFLAGS) $(INCLUDEFLAGS) $(LDFLAGS) $^ -o $@
 
 clean:
-	@rm -rf $(BUILDDIR)
+	@rm -rf $(BUILDDIR)/phase1
+
+.PHONY: $(BUILDDIR)/phase1 clean

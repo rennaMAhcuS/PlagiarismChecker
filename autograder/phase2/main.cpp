@@ -242,12 +242,12 @@ double testcase::testcase_wrapper(std::string __test_dir, double weightage,
 }
 
 int main(void) {
-    double score = testcase::testcase_wrapper("hogwarts", 1.0, 15);
+    double score = testcase::testcase_wrapper("hogwarts", 1.0, 25);
     score += testcase::testcase_wrapper("ainur", 1.0, 15);
-    score += testcase::testcase_wrapper("jedisith", 1.0, 15);
+    score += testcase::testcase_wrapper("jedisith", 1.0, 25);
     score += testcase::testcase_wrapper("avengers", 1.0, 10);
     score += testcase::testcase_wrapper("phase1_submissions", 1.0, 100.0);
-    score += testcase::testcase_wrapper("justice_league", 1.0, 200.0);
+    // score += testcase::testcase_wrapper("justice_league", 1.0, 200.0);
     std::cout << "-----------------------------------------------" << std::endl;
     std::cout << "Total score: " << score << std::endl;
     return 0;

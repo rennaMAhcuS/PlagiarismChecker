@@ -1,5 +1,5 @@
 # VSCode
-# .vscode
+.vscode
 
 # Zone Identifiers - for WSL
 *Zone*
@@ -22,5 +22,3 @@
 *.fdb_latexmk
 *.synctex.gz
 *.xdv
-
-# autograder
