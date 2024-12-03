@@ -1,5 +1,3 @@
-all: main test score
-
 CXX = clang++
 CXXWARNINGS = -Wall -Wshadow -Wuninitialized -Wtype-limits -Wno-unused-variable
 CXXFLAGS = -std=gnu++20 -g -fsanitize=address,undefined $(CXXWARNINGS)
@@ -7,36 +5,50 @@ INCLUDEFLAGS = -I/usr/lib/llvm-18/include
 LDFLAGS = -lclang -L/usr/lib/llvm-18/lib -rpath /usr/lib/llvm-18/lib -fuse-ld=lld
 
 # The build directory
-BUILDDIR = ~/build
+BUILDDIR = $(HOME)/build
+PHASE1DIR = $(BUILDDIR)/phase1
 
-main: $(BUILDDIR)/main
-	@echo main
-	@$(BUILDDIR)/main 2> /dev/null
-	@rm -rf $(BUILDDIR)/main
+all: main chrono score
 
-$(BUILDDIR)/main: main.cpp tokenizer.cpp
-	@mkdir -p $(BUILDDIR)
-	@$(CXX) $(CXXFLAGS) $(INCLUDEFLAGS) $(LDFLAGS) $^ -o $@
+# ============================================================
 
-test: $(BUILDDIR)/test
-	@echo test
-	@$(BUILDDIR)/test 2> /dev/null
-	@rm -rf $(BUILDDIR)/test
+$(PHASE1DIR)/main: main.cpp tokenizer.cpp
+	@mkdir -p $(PHASE1DIR)
+	@echo "\033[1;33mCompiling main:\033[0m"
+	$(CXX) $(CXXFLAGS) $(INCLUDEFLAGS) $(LDFLAGS) $^ -o $@
 
-$(BUILDDIR)/test: test.cpp tokenizer.cpp
-	@mkdir -p $(BUILDDIR)
-	@$(CXX) $(CXXFLAGS) $(INCLUDEFLAGS) $(LDFLAGS) $^ -o $@
+main: $(PHASE1DIR)/main
+	@echo "\033[1;34mRunning main:\033[0m"
+	@$(PHASE1DIR)/main 2> /dev/null
+	@echo "\033[1m"'============================================================'"\033[0m"
 
-score: $(BUILDDIR)/score
-	@echo score
-	@$(BUILDDIR)/score 2> /dev/null
-	@rm -rf $(BUILDDIR)/score
+# ============================================================
 
-$(BUILDDIR)/score: score.cpp tokenizer.cpp
-	@mkdir -p $(BUILDDIR)
-	@$(CXX) $(CXXFLAGS) $(INCLUDEFLAGS) $(LDFLAGS) $^ -o $@
+$(PHASE1DIR)/chrono: chrono.cpp tokenizer.cpp
+	@mkdir -p $(PHASE1DIR)
+	@echo "\033[1;33mCompiling chrono:\033[0m"
+	$(CXX) $(CXXFLAGS) $(INCLUDEFLAGS) $(LDFLAGS) $^ -o $@
+
+chrono: $(PHASE1DIR)/chrono
+	@echo "\033[1;34mRunning chrono:\033[0m"
+	@$(PHASE1DIR)/chrono 2> /dev/null
+	@echo "\033[1m"'============================================================'"\033[0m"
+
+# ============================================================
+
+$(PHASE1DIR)/score: score.cpp tokenizer.cpp
+	@mkdir -p $(PHASE1DIR)
+	@echo "\033[1;33mCompiling score:\033[0m"
+	$(CXX) $(CXXFLAGS) $(INCLUDEFLAGS) $(LDFLAGS) $^ -o $@
+
+score: $(PHASE1DIR)/score
+	@echo "\033[1;34mRunning score:\033[0m"
+	@$(PHASE1DIR)/score 2> /dev/null
+	@echo "\033[1m"'============================================================'"\033[0m"
+
+# ============================================================
 
 clean:
-	rm -rf $(BUILDDIR)
+	rm -rf $(PHASE1DIR)
 
-.PHONY: main test score clean
+.PHONY: all main chrono score clean
