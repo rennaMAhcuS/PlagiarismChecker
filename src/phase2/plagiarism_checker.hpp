@@ -25,18 +25,14 @@ class plagiarism_checker_t {
     void add_submission(std::shared_ptr<submission_t> __submission);
 
    protected:
-    // TODO: Add members and function signatures here
-    std::queue<std::tuple<int, std::shared_ptr<submission_t>, int>> pipe;        // `{time, submission, number of previous files}`
-    std::vector<std::tuple<int, std::shared_ptr<submission_t>, bool>> to_check;  // `{time, submission, flagged?}`
+    std::queue<std::tuple<int, std::shared_ptr<submission_t>, int>> pipe;
+    std::vector<std::tuple<int, std::shared_ptr<submission_t>, bool>> to_check;
     std::thread processor, processor2;
     std::atomic<bool> stop;
     std::mutex queue_mutex;
     std::condition_variable cv;
 
     int curr_time_millis();
-    // void push_submission(std::shared_ptr<submission_t>, int, int);
     void process_submissions();
     void check_two_submissions(std::pair<int, std::shared_ptr<submission_t>>, std::pair<int, std::shared_ptr<submission_t>>, int, int, int&);
-
-    // End TODO
 };

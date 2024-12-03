@@ -6,13 +6,15 @@ LDFLAGS = -lclang -L/usr/lib/llvm-18/lib -rpath /usr/lib/llvm-18/lib -fuse-ld=ll
 
 # The build directory
 BUILDDIR = $(HOME)/build
+GRADERDIR = $(BUILDDIR)/autograder
 
-$(BUILDDIR)/phase2: main.cpp plagiarism_checker.cpp tokenizer.cpp
-	@rm -rf $(BUILDDIR)
-	@mkdir -p $(BUILDDIR)
-	$(CXX) $(CXXFLAGS) $(INCLUDEFLAGS) $(LDFLAGS) $^ -o $@
+$(GRADERDIR)/phase2: main.cpp plagiarism_checker.cpp tokenizer.cpp
+	@rm -rf $(GRADERDIR)
+	@mkdir -p $(GRADERDIR)
+	$(CXX) $(CXXFLAGS) $(INCLUDEFLAGS) $(LDFLAGS) -DGRADERDIR=\"$(GRADERDIR)\" $^ -o $@
+
 
 clean:
-	@rm -rf $(BUILDDIR)
+	@rm -rf $(GRADERDIR)/phase2
 
-.PHONY: $(BUILDDIR)/phase2 clean
+.PHONY: $(GRADERDIR)/phase2 clean

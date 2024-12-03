@@ -25,7 +25,6 @@ void execute_and_verify_testcase(std::string test_dir) {
         std::cout << "Your output: " << std::setw(10) << std::left << output[i];
         std::cout << "\tSample output: " << expected[i] << std::endl;
     }
-    std::cout << std::endl;
 }
 
 int main(void) {

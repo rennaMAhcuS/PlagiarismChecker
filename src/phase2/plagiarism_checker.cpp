@@ -2,8 +2,6 @@
 // You should NOT add ANY other includes to this file.
 // Do NOT add "using namespace std;".
 
-// TODO: Implement the methods of the plagiarism_checker_t class
-
 plagiarism_checker_t::plagiarism_checker_t() {
     processor = std::thread(&plagiarism_checker_t::process_submissions, this);
 }
@@ -31,14 +29,25 @@ plagiarism_checker_t::~plagiarism_checker_t() {
 void plagiarism_checker_t::check_two_submissions(std::pair<int, std::shared_ptr<submission_t>> curr,
                                                  std::pair<int, std::shared_ptr<submission_t>> prev,
                                                  int prev_index, int curr_index, int& matches_last_second) {
-    std::vector<int> curr_tokens = tokenizer_t(curr.second->codefile).get_tokens();
-    std::vector<int> prev_tokens = tokenizer_t(prev.second->codefile).get_tokens();
+    static std::unordered_map<std::string, std::vector<int>> token_cache;
+
+    auto get_tokens = [&](const std::string& codefile) -> std::vector<int> {
+        if (token_cache.find(codefile) == token_cache.end()) {
+            token_cache[codefile] = tokenizer_t(codefile).get_tokens();
+        }
+        return token_cache[codefile];
+    };
+
+    // To check which ids are getting compared
+    std::cerr << curr.second->id << " " << prev.second->id << std::endl;
+
+    std::vector<int> curr_tokens = get_tokens(curr.second->codefile);
+    std::vector<int> prev_tokens = get_tokens(prev.second->codefile);
 
     int num_matches = 0;
     int max_match_length = 0;
 
-    // TODO: calculate `num_matches` and `max_match_length`
-
+    // calculate `num_matches` and `max_match_length`
     int curr_size = curr_tokens.size();
     int prev_size = prev_tokens.size();
     std::vector<std::vector<int>> dp(curr_size + 1, std::vector<int>(prev_size + 1, 0));
@@ -57,8 +66,6 @@ void plagiarism_checker_t::check_two_submissions(std::pair<int, std::shared_ptr<
         }
         std::swap(curr_row, prev_row);
     }
-
-    // end TODO
 
     // flagging
     if (num_matches >= 10 || max_match_length >= 75) {
@@ -145,5 +152,3 @@ int plagiarism_checker_t::curr_time_millis() {
     auto curr_time = std::chrono::duration_cast<std::chrono::milliseconds>(duration).count();
     return curr_time;
 }
-
-// End TODO

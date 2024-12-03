@@ -8,6 +8,10 @@
 
 #include "plagiarism_checker.hpp"
 
+#ifndef GRADERDIR
+#define GRADERDIR
+#endif
+
 // You should NOT modify ANYTHING in this file.
 
 void student_t::flag_student(std::shared_ptr<submission_t> __submission) {
@@ -167,14 +171,14 @@ void testcase::print_and_clear(std::vector<long>& flagged_students,
     std::cout << std::endl;
     int pid;
     if ((pid = fork()) == 0) {
-        execlp("rm", "rm", "output.txt", NULL);
+        execlp("rm", "rm", (std::string(GRADERDIR) + "/output.txt").c_str(), NULL);
         exit(0);
     }
     waitpid(pid, NULL, 0);
 }
 
 void testcase::redirect_and_time_wrapper(double time_limit) {
-    FILE* output = fopen("output.txt", "w");
+    FILE* output = fopen((std::string(GRADERDIR) + "/output.txt").c_str(), "w");
     dup2(fileno(output), 1);
     signal(SIGCHLD, testcase::handle_sigchld);
     int pid = fork();
@@ -200,7 +204,7 @@ void testcase::redirect_and_time_wrapper(double time_limit) {
 }
 
 double testcase::output_wrapper(double weightage, int status) {
-    std::ifstream in("output.txt");
+    std::ifstream in((std::string(GRADERDIR) + "/output.txt").c_str());
     std::vector<long> flagged_students;
     long id;
     while (in >> id) {
@@ -231,7 +235,7 @@ double testcase::testcase_wrapper(std::string __test_dir, double weightage,
     waitpid(pid, &status, 0);
     if (WEXITSTATUS(status) != 0) {
         if ((pid = fork()) == 0) {
-            execlp("rm", "rm", "output.txt", NULL);
+            execlp("rm", "rm", (std::string(GRADERDIR) + "/output.txt").c_str(), NULL);
             exit(0);
         }
         waitpid(pid, NULL, 0);
@@ -242,12 +246,12 @@ double testcase::testcase_wrapper(std::string __test_dir, double weightage,
 }
 
 int main(void) {
-    double score = testcase::testcase_wrapper("hogwarts", 1.0, 25);
+    double score = testcase::testcase_wrapper("hogwarts", 1.0, 15);
     score += testcase::testcase_wrapper("ainur", 1.0, 15);
-    score += testcase::testcase_wrapper("jedisith", 1.0, 25);
+    score += testcase::testcase_wrapper("jedisith", 1.0, 15);
     score += testcase::testcase_wrapper("avengers", 1.0, 10);
     score += testcase::testcase_wrapper("phase1_submissions", 1.0, 100.0);
-    // score += testcase::testcase_wrapper("justice_league", 1.0, 200.0);
+    score += testcase::testcase_wrapper("justice_league", 1.0, 200.0);
     std::cout << "-----------------------------------------------" << std::endl;
     std::cout << "Total score: " << score << std::endl;
     return 0;

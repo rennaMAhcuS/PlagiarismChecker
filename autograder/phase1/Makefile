@@ -4,13 +4,15 @@ CXXFLAGS = -std=gnu++20 -g $(CXXWARNINGS)
 INCLUDEFLAGS = -I/usr/lib/llvm-18/include
 LDFLAGS = -lclang -L/usr/lib/llvm-18/lib -rpath /usr/lib/llvm-18/lib -fuse-ld=lld
 
+# The build directory
 BUILDDIR = $(HOME)/build
+GRADERDIR = $(BUILDDIR)/autograder
 
-$(BUILDDIR)/phase1: main.cpp tokenizer.cpp
-	@mkdir -p $(BUILDDIR)
+$(GRADERDIR)/phase1: main.cpp tokenizer.cpp
+	@mkdir -p $(GRADERDIR)
 	$(CXX) $(CXXFLAGS) $(INCLUDEFLAGS) $(LDFLAGS) $^ -o $@
 
 clean:
-	@rm -rf $(BUILDDIR)/phase1
+	@rm -rf $(GRADERDIR)/phase1
 
-.PHONY: $(BUILDDIR)/phase1 clean
+.PHONY: $(GRADERDIR)/phase1 clean

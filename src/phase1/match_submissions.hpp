@@ -1,11 +1,11 @@
 #include <array>
 #include <cmath>
+#include <fstream>
 #include <iostream>
 #include <span>
 #include <vector>
 // -----------------------------------------------------------------------------
 #include <chrono>
-#include <fstream>  // ---- ADDED By TA: Tejas Sharma to fix compilation errors.
 #include <string>
 // -----------------------------------------------------------------------------
 #include <unordered_map>
@@ -17,6 +17,14 @@
 // Also DO NOT add the include "bits/stdc++.h"
 
 // OPTIONAL: Add your helper functions and data structures here
+
+/**
+ * @file match_submissions.hpp
+ * @brief Header file for plagiarism checker functions.
+ *
+ * This file contains functions to check for plagiarism between two submissions
+ * by comparing exact and approximate matches of integer sequences.
+ */
 
 // color codes for good printing
 const std::string RESET = "\033[0m";
@@ -54,10 +62,12 @@ void printContainerToFile(T& v, std::string filename) {
     fileStream.close();
 }
 
-// @brief: Get the hash of a given substring from a vector
-// @param `v`: vector of integers
-// @param `i`: starting index of the substring
-// @param `L`: length of the substring
+/**
+ * @brief Get the hash of a given substring from a vector
+ * @param v vector of integers
+ * @param i starting index of the substring
+ * @param L length of the substring
+ */
 std::string getHash(const std::vector<int>& v, int i, int L) {
     std::string key;
     key.reserve(L * sizeof(int));
@@ -67,12 +77,14 @@ std::string getHash(const std::vector<int>& v, int i, int L) {
     return key;
 }
 
-// @brief: Calculates the all hashes of substrings of a given length from a
-// vector and also maps these hashes to their corresponding substring's
-// starting index
-// @param `v`: vector of integers
-// @param `L`: length of the substrings we want
-// @return: map mapping each hash of a substring to its starting index
+/**
+ * @brief Calculates the all hashes of substrings of a given length from a
+ * vector and also maps these hashes to their corresponding substring's
+ * starting index
+ * @param v vector of integers
+ * @param L length of the substrings we want
+ * @return map mapping each hash of a substring to its starting index
+ */
 typedef std::unordered_multimap<std::string, int> SubstrMap;
 SubstrMap allSubstrHashes(const std::vector<int>& v, int L) {
     SubstrMap substr_map;
@@ -86,12 +98,14 @@ SubstrMap allSubstrHashes(const std::vector<int>& v, int L) {
     return substr_map;
 }
 
-// @brief: Checks if a substring of a vector has already been checked
-// @param `visited`: vector of booleans to keep track of checked positions
-// @param `i`: starting index of the substring
-// @param `L`: length of the substring
-// @return: true if some portion substring has already been checked, false
-// otherwise
+/**
+ * @brief Checks if a substring of a vector has already been checked
+ * @param visited vector of booleans to keep track of checked positions
+ * @param i starting index of the substring
+ * @param L length of the substring
+ * @return true if some portion substring has already been checked, false
+ * otherwise
+ */
 bool isAlreadyChecked(const std::vector<bool>& visited, int i, int L) {
     for (int k = i; k < i + L; ++k) {
         if (visited[k]) return true;
@@ -99,9 +113,11 @@ bool isAlreadyChecked(const std::vector<bool>& visited, int i, int L) {
     return false;
 }
 
-// @brief: Calculates the number of exact matches between two vectors
-// @param `v1`: first vector of integers
-// @param `v2`: second vector of integers
+/**
+ * @brief Calculates the number of exact matches between two vectors
+ * @param v1 first vector of integers
+ * @param v2 second vector of integers
+ */
 int numExactMatches(const std::vector<int>& v1, const std::vector<int>& v2) {
     if (v1.empty() || v2.empty()) return 0;
 
@@ -135,12 +151,14 @@ int numExactMatches(const std::vector<int>& v1, const std::vector<int>& v2) {
     return num;
 }
 
-// @brief: Calculates the longest approximate match between two vectors
-// A longest approximate match is the longest sequence of elements from both
-// vectors such that the length of longest common subsequences is at least 80%
-// of the longer of the two subsequences
-// @param `v1`: first vector of integers
-// @param `v2`: second vector of integers
+/**
+ * @brief Calculates the longest approximate match between two vectors
+ * A longest approximate match is the longest sequence of elements from both
+ * vectors such that the length of longest common subsequences is at least 80%
+ * of the longer of the two subsequences
+ * @param v1 first vector of integers
+ * @param v2 second vector of integers
+ */
 std::array<int, 3> longestApproxMatch(std::vector<int>& v1,
                                       std::vector<int>& v2) {
     int n = v1.size(), m = v2.size();
@@ -169,7 +187,9 @@ std::array<int, 3> longestApproxMatch(std::vector<int>& v1,
     return {maxLen, maxI, maxJ};
 }
 
-// @brief: Checks if the two vectors are plagarized
+/**
+ * @brief Checks if the two vectors are plagarized
+ */
 bool isPlagged(const int exactMatches, const int approxMatches,
                const int v1Size, const int v2Size) {
     double exactMatchRatio = (double)exactMatches / v1Size;
@@ -180,7 +200,7 @@ bool isPlagged(const int exactMatches, const int approxMatches,
     double weightApprox = 1 - weightExact;
     double score = weightExact * exactMatchRatio + weightApprox * approxMatchRatio;
 
-    if (score > threshold) return true;
+    if (score > threshold || exactMatches >= 100 || approxMatches >= 120) return true;
     return false;
 }
 
