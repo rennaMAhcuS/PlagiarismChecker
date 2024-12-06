@@ -1,8 +1,11 @@
+# .DS_Store - for macOS
+.DS_Store
+
 # Zone Identifiers - for WSL
 *Zone*
 
-# .DS_Store - for macOS
-.DS_Store
+# VSCode
+.vscode
 
 # LaTeX
 *.aux
