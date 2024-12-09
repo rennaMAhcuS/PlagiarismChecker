@@ -30,8 +30,21 @@
 }
 
 \usepackage{fontspec}
-\setmainfont{Palatino}
-\setmonofont[Scale=0.9]{Monaco}
+\setmainfont[
+    Path = fonts/,
+    UprightFont = *-Regular,
+    BoldFont = *-Bold,
+    ItalicFont = *-Italic,
+    BoldItalicFont = *-BoldItalic
+]{Palatino}
+\setmonofont[
+    Path = fonts/,
+    UprightFont = *,
+    BoldFont = *,
+    ItalicFont = *,
+    BoldItalicFont = *,
+    Scale=0.9
+]{Monaco}
 
 % Title and Authors
 \usepackage{eso-pic}
@@ -119,11 +132,9 @@ Let $n$ and $m$ be the submission sizes.
     \end{itemize}
     \item \textbf{Function Signatures:}
     \begin{itemize}
-        \item \texttt{std::pair<int,int> size\_of\_match(std::vector<int>\&, std::vector<int>\&)}:
-        Calculates the number of exact matches and the longest exact match.
-        \item \texttt{void plagiarism\_checker\_t::check\_two\_submissions(int, int, int\&)}:
+        \item \texttt{void check\_two\_submissions(std::pair<int, std::shared\_ptr<submission\_t>>, \\ std::pair<int, std::shared\_ptr<submission\_t>>, int, int, int\&)}:
         Checks if two submissions are similar and flags them if necessary.
-        \item \texttt{void plagiarism\_checker\_t::compare\_submissions(int)}:
+        \item \texttt{void plagiarism\_checker\_t::process\_submissions(int)}:
         Compares the current submission with all previous submissions and flags in case of patchwork plagiarism.
     \end{itemize}
 \end{itemize}
@@ -137,39 +148,37 @@ Let the number of files be $m$ and the average number of tokens per file be $n$.
 \vspace{-5pt}
 \subsection{Concurrency Features}
 \begin{itemize}[noitemsep]
-    \item \textbf{Threading:} Threading isused to make \texttt{add\_submission} non-blocking and process submissions parallelly:
+    \item \textbf{Threading:} Threading is used to make \texttt{add\_submission} non-blocking and process submissions parallelly:
     \begin{itemize}
-        \item The function \texttt{add\_submission} pushes the submission to a queue. Submissions are processed in \\ \texttt{submission\_processor\_thread}. Submission is made non-blocking in this way.
-        \item \texttt{submission\_processor\_thread} maintains the metadata in \texttt{submissions\_list} and initiates tasks in \\ \texttt{tasks\_queue}. The two threads in \texttt{thread\_pool} perform the actual processing of comparing and flagging submissions.
+        \item The function \texttt{add\_submission} pushes the submission to a queue. Submissions are processed in \\ The \texttt{processor} thread. Submission is made non-blocking in this way.
+        \item The \texttt{processor} thread maintains the metadata in \texttt{to\_check} and initiates tasks in \texttt{pipe} queue. The thread \texttt{processor} performs the actual processing of comparing and flagging submissions.
     \end{itemize}
     \item \textbf{Concurrency:} 
     \begin{itemize}
         \item Concurrency is maintained using \texttt{mutex} and locks to avoid data races when shared data is used.
-        \item Conditional variables \texttt{cv} and \texttt{tasks\_cv} send signals so that threads wait passively.
+        \item Conditional variable \texttt{cv} sends signals so that thread waits passively.
         \item  The atomic variable \texttt{stop} is used to terminate the code properly in the presence of threading.
     \end{itemize} 
 \end{itemize}
 \vspace{-5pt}
 \subsection{File Identification}
-When a submission is made, it is checked against each file submitted before it via the vector \texttt{submissions\_list}. If a submission was made within one second before the submission, even that is flagged if it was not already flagged. The vector maintains every submission's pointer, timestamp, and status(flagged/not flagged).
+When a submission is made, it is checked against each file submitted before it via the vector \texttt{to\_check}. If a submission was made within one second before the submission, even that is flagged if it was not already flagged. The vector maintains every submission's pointer, timestamp, and status(flagged/not flagged).
 \vspace{-5pt}
 \subsection{Helpers and Data Structures}
 \begin{itemize}[noitemsep]
     \item \textbf{Helpers:}
     \item \begin{itemize}
-        \item \texttt{void plagiarism\_checker\_t::submission\_processor()}:
+        \item \texttt{void plagiarism\_checker\_t::process\_submissions()}:
         Updates metadata of each new submission.
-        \item \texttt{void plagiarism\_checker\_t::worker\_thread()}:
-        Calls \texttt{compare\_submissions} ensuring no memory races.
-        \item \texttt{int64\_t plagiarism\_checker\_t::curr\_time\_millis()}:
-        Gives the current time according to the \\ \texttt{steady\_clock}.
+        \item \texttt{int plagiarism\_checker\_t::curr\_time\_millis()}:
+        Gives the current time according to the \\ \texttt{system\_clock}.
     \end{itemize}
     \item \textbf{Data Structures:} The data structures \textbf{queue} and \textbf{vector} are used.
     \item \textbf{Flow:} 
     \begin{itemize}
         \item In the constructor, threads are started, and the vector is initialized with initial submissions.
         \item When \texttt{add\_submission} is called, the submission is pushed to a queue.
-        \item Processing is done by the other threads, leaving the main thread free.
+        \item Processing is done by the other thread, leaving the main thread free to add other submissions.
         \item When the destructor is called, threads are notified that there will be no more submissions and joined to the main thread.
     \end{itemize}
 \end{itemize}
