@@ -1,0 +1,5 @@
+The codes have a different logic, and some dummy functions. The dummy functions are created by copy-pasting the original functions of both the codes and variable name changes and removing some statements. The issue is that the checkers are counting very small negligible matches also with the similar weightage of a continuous match, Whereas the approximate matches also must be considered to see if these small matching bits are adjacent or not.
+
+Breaks checkers 0 and 3.
+
+The leetcode problem link: https://leetcode.com/problems/binary-tree-level-order-traversal-ii
