@@ -2,10 +2,25 @@
 // You should NOT add ANY other includes to this file.
 // Do NOT add "using namespace std;".
 
+/**
+ * @file plagiarism_checker.cpp
+ * @brief Plagiarism checker class functions.
+ *
+ * This file contains functions to check for plagiarism between two submissions,
+ * powering the class `plagiarism_checker_t`.
+ */
+
+/**
+ * @brief The constructor.
+ */
 plagiarism_checker_t::plagiarism_checker_t() {
     processor = std::thread(&plagiarism_checker_t::process_submissions, this);
 }
 
+/**
+ * @brief The constructor with a initializing parameter: `__submissions`.
+ * @param __submissions The array of submissions made
+ */
 plagiarism_checker_t::plagiarism_checker_t(std::vector<std::shared_ptr<submission_t>> __submissions) {
     for (auto i : __submissions) {
         to_check.push_back({0, i, false});
@@ -13,6 +28,10 @@ plagiarism_checker_t::plagiarism_checker_t(std::vector<std::shared_ptr<submissio
     processor = std::thread(&plagiarism_checker_t::process_submissions, this);
 }
 
+/**
+ * @brief The destructor.
+ * The destructor ensures to join all the threads to ensure that all the processes are completed.
+ */
 plagiarism_checker_t::~plagiarism_checker_t() {
     // join the thread and terminate after processing is done
     {
@@ -23,9 +42,24 @@ plagiarism_checker_t::~plagiarism_checker_t() {
     if (processor.joinable()) processor.join();
 }
 
-// updates the flags if plag has taken place
-// updates `matches_last_second` if `prev` is within 1 second of `curr`
-// args: {curr_time, curr_submission}, {prev_time, prev_submission}, prev_index, curr_index, matches_last_second(to be updated)
+/**
+ * @brief Checks two submissions for plagiarism.
+ *
+ * This function compares two submissions by tokenizing their code files and analyzing
+ * the matching token sequences between them (The algorithm is similar to the Phase 1's
+ * algorithm).
+ * We also use the tokens caching, where we avoid recalculating them. We store them in an
+ * unordered map.
+ *
+ * Updates the flags if any plagiarism has taken place. Also updates `matches_last_second`
+ * if `prev` is within 1 second of `curr`.
+ *
+ * @param curr The current submission
+ * @param prev The previous submission
+ * @param prev_index The index of the previous submission in the list of submissions to check.
+ * @param curr_index The index of the current submission in the list of submissions to check.
+ * @param matches_last_second The number of matches that occurred within the last second.
+ */
 void plagiarism_checker_t::check_two_submissions(std::pair<int, std::shared_ptr<submission_t>> curr,
                                                  std::pair<int, std::shared_ptr<submission_t>> prev,
                                                  int prev_index, int curr_index, int& matches_last_second) {
@@ -92,6 +126,12 @@ void plagiarism_checker_t::check_two_submissions(std::pair<int, std::shared_ptr<
     return;
 }
 
+/**
+ * @brief Continuously processes submissions, retrieves submissions from a thread-safe queue
+ * to detect and handle potential plagiarism. Potential patchwork plagiarism is also checked.
+ * The method ensures thread safety by appropriately locking shared resources during queue
+ * access and submission processing, making a thread-safe queue.
+ */
 void plagiarism_checker_t::process_submissions() {
     while (true) {
         std::tuple<int, std::shared_ptr<submission_t>, int> submission;
@@ -115,7 +155,8 @@ void plagiarism_checker_t::process_submissions() {
             std::lock_guard<std::mutex> lock(queue_mutex);
             for (int i = num_to_check - 1; i >= 0; i--) {
                 std::pair<int, std::shared_ptr<submission_t>> curr = {curr_time, __submission};
-                std::pair<int, std::shared_ptr<submission_t>> prev = {std::get<0>(to_check[i]), std::get<1>(to_check[i])};
+                std::pair<int, std::shared_ptr<submission_t>> prev = {std::get<0>(to_check[i]),
+                                                                      std::get<1>(to_check[i])};
 
                 if (prev.first <= std::max(curr.first - 1000, 0) &&
                     std::get<2>(to_check[num_to_check])) break;
@@ -134,6 +175,9 @@ void plagiarism_checker_t::process_submissions() {
     }
 }
 
+/**
+ * @brief Adds submissions into the queue for being processed.
+ */
 void plagiarism_checker_t::add_submission(std::shared_ptr<submission_t> __submission) {
     int curr_time = curr_time_millis();
     int num_to_check;
@@ -146,6 +190,9 @@ void plagiarism_checker_t::add_submission(std::shared_ptr<submission_t> __submis
     cv.notify_one();
 }
 
+/**
+ * @brief Retrieves the current time in milliseconds since the epoch.
+ */
 int plagiarism_checker_t::curr_time_millis() {
     auto now = std::chrono::system_clock::now();
     auto duration = now.time_since_epoch();
