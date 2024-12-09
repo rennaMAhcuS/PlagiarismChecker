@@ -1,0 +1,5 @@
+They are plagged. We have changed some for loops to while, changed order of variable declaration and order of functions.
+
+Breaks checkers 1, 2 and 5.
+
+The leetcode problem link: https://leetcode.com/problems/find-the-shortest-superstring

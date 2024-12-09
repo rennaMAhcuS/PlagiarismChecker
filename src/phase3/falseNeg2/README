@@ -1,0 +1,5 @@
+False negatives, checker 2 is giving 0 even if it's plagged. We have a ~32% match between the files.
+
+Breaks checker 2.
+
+The leetcode problem link: https://leetcode.com/problems/minimum-cost-to-convert-string-ii
