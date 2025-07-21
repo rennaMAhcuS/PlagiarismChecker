@@ -1,6 +1,8 @@
-# Plagiarism Checker - CS293 Project 2024
+# Plagiarism Checker - DSA Project
 
 A Plagiarism Checker!
+
+This is a course project for the CS293 (IIT Bombay) DSA Lab, 2024.
 
 [**Source**](https://github.com/SuperSat001/CS293-Project-2024) - contains the problem statement and the required files.
 
